@@ -64,20 +64,20 @@ export async function redirectToOriginalUrl(
   reply: FastifyReply,
 ) {
   const redirectSchema = z.object({
-    redirectUrl: z.string(),
+    shortCode: z.string(),
   })
 
-  const { redirectUrl } = redirectSchema.parse(request.params)
+  const { shortCode } = redirectSchema.parse(request.params)
 
-  console.log(redirectUrl)
+  console.log(shortCode)
 
-  if (!redirectUrl) {
+  if (!shortCode) {
     return reply.status(400).send({ error: 'URL inválida' })
   }
 
   const url = await prisma.shortenedUrl.findFirst({
     where: {
-      short_url: redirectUrl,
+      short_url: shortCode,
     },
   })
   console.log(url)
@@ -88,7 +88,7 @@ export async function redirectToOriginalUrl(
 
   await prisma.shortenedUrl.update({
     where: {
-      short_url: redirectUrl,
+      short_url: shortCode,
     },
     data: {
       clicks: {
