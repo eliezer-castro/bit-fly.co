@@ -79,7 +79,7 @@ export async function loginUser(request: FastifyRequest, reply: FastifyReply) {
   }
 
   const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, {
-    expiresIn: 600,
+    expiresIn: '1h',
   })
 
   return reply.send({ token })
