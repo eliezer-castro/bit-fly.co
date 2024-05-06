@@ -1,0 +1,31 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String         @id @default(uuid())
+  name         String
+  email        String         @unique
+  password     String
+  created_at   DateTime       @default(now())
+  shortenedUrl ShortenedUrl[]
+
+  @@map("users")
+}
+
+model ShortenedUrl {
+  id         String   @id @default(uuid())
+  long_url   String
+  short_url  String   @unique
+  clicks     Int      @default(0)
+  created_at DateTime @default(now())
+  user       User     @relation(fields: [user_id], references: [id])
+  user_id    String
+
+  @@map("shortened_urls")
+}
