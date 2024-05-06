@@ -2,6 +2,7 @@ import { FastifyRequest, FastifyReply } from 'fastify'
 import { z } from 'zod'
 import { prisma } from '../../lib/prisma'
 import { nanoid } from 'nanoid'
+import jwt from 'jsonwebtoken'
 
 export async function createShortUrl(
   request: FastifyRequest,
@@ -10,10 +11,21 @@ export async function createShortUrl(
   const urlSchema = z.object({
     url: z.string().url(),
     customAlias: z.string().optional(),
-    userId: z.string(),
   })
 
-  const { url, customAlias, userId } = urlSchema.parse(request.body)
+  const { url, customAlias } = urlSchema.parse(request.body)
+
+  const token = request.headers.authorization?.replace('Bearer ', '')
+
+  if (!token) {
+    return reply.status(401).send({ error: 'Token não fornecido' })
+  }
+
+  if (!process.env.JWT_SECRET) {
+    throw new Error('JWT_SECRET não está definido')
+  }
+  const decoded = jwt.verify(token, process.env.JWT_SECRET)
+  const userId = typeof decoded === 'string' ? decoded : decoded.userId
 
   if (!url || !userId) {
     return reply.status(400).send({ error: 'Url e userId são obrigatórios' })
@@ -104,12 +116,17 @@ export async function getAllShortUrls(
   request: FastifyRequest,
   reply: FastifyReply,
 ) {
-  const userSchema = z.object({
-    userId: z.string(),
-  })
+  const token = request.headers.authorization?.replace('Bearer ', '')
 
-  const { userId } = userSchema.parse(request.params)
-  console.log(userId)
+  if (!token) {
+    return reply.status(401).send({ error: 'Token não fornecido' })
+  }
+
+  if (!process.env.JWT_SECRET) {
+    throw new Error('JWT_SECRET não está definido')
+  }
+  const decoded = jwt.verify(token, process.env.JWT_SECRET)
+  const userId = typeof decoded === 'string' ? decoded : decoded.userId
 
   if (!userId) {
     return reply.status(400).send({ error: 'userId é obrigatório' })
@@ -140,10 +157,21 @@ export async function getShortUrlDetails(
 ) {
   const getUrlSchema = z.object({
     urlId: z.string(),
-    userId: z.string(),
   })
 
-  const { urlId, userId } = getUrlSchema.parse(request.query)
+  const { urlId } = getUrlSchema.parse(request.query)
+
+  const token = request.headers.authorization?.replace('Bearer ', '')
+
+  if (!token) {
+    return reply.status(401).send({ error: 'Token não fornecido' })
+  }
+
+  if (!process.env.JWT_SECRET) {
+    throw new Error('JWT_SECRET não está definido')
+  }
+  const decoded = jwt.verify(token, process.env.JWT_SECRET)
+  const userId = typeof decoded === 'string' ? decoded : decoded.userId
 
   if (!urlId || !userId) {
     return reply.status(400).send({ error: 'id e userId são obrigatórios' })
@@ -179,10 +207,20 @@ export async function deleteShortUrl(
 ) {
   const deleteUrlSchema = z.object({
     urlId: z.string(),
-    userId: z.string(),
   })
 
-  const { urlId, userId } = deleteUrlSchema.parse(request.query)
+  const { urlId } = deleteUrlSchema.parse(request.query)
+  const token = request.headers.authorization?.replace('Bearer ', '')
+
+  if (!token) {
+    return reply.status(401).send({ error: 'Token não fornecido' })
+  }
+
+  if (!process.env.JWT_SECRET) {
+    throw new Error('JWT_SECRET não está definido')
+  }
+  const decoded = jwt.verify(token, process.env.JWT_SECRET)
+  const userId = typeof decoded === 'string' ? decoded : decoded.userId
 
   if (!urlId || !userId) {
     return reply.status(400).send({ error: 'id e userId são obrigatórios' })
