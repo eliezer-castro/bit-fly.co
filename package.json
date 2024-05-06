@@ -19,12 +19,15 @@
     "typescript": "^5.4.5"
   },
   "dependencies": {
+    "@fastify/swagger": "^8.14.0",
+    "@fastify/swagger-ui": "^3.0.0",
     "@prisma/client": "^5.13.0",
     "@types/bcryptjs": "^2.4.6",
     "@types/jsonwebtoken": "^9.0.6",
     "bcryptjs": "^2.4.3",
     "express": "^4.19.2",
     "fastify": "^4.26.2",
+    "fastify-decorators": "^3.15.1",
     "jsonwebtoken": "^9.0.2",
     "nanoid": "^5.0.7",
     "zod": "^3.23.6"
