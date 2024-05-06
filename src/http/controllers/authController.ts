@@ -5,7 +5,10 @@ import bcrypt from 'bcryptjs'
 import { nanoid } from 'nanoid'
 import jwt from 'jsonwebtoken'
 
-export async function createUser(request: FastifyRequest, reply: FastifyReply) {
+export async function registerUser(
+  request: FastifyRequest,
+  reply: FastifyReply,
+) {
   const userSchema = z.object({
     name: z.string(),
     email: z.string().email(),
@@ -44,7 +47,7 @@ export async function createUser(request: FastifyRequest, reply: FastifyReply) {
   return reply.status(201).send({ message: 'Usuário criado com sucesso' })
 }
 
-export async function login(request: FastifyRequest, reply: FastifyReply) {
+export async function loginUser(request: FastifyRequest, reply: FastifyReply) {
   const loginSchema = z.object({
     email: z.string().email(),
     password: z.string().min(8),

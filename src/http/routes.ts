@@ -1,44 +1,36 @@
 import { FastifyInstance } from 'fastify'
 import {
-  createUrl,
-  redirectUrl,
-  getAllUrls,
-  getUrl,
-  deleteUrl,
+  createShortUrl,
+  deleteShortUrl,
+  getAllShortUrls,
+  getShortUrlDetails,
+  redirectToOriginalUrl,
 } from './controllers/shortUrlController'
-import { createUser, login } from './controllers/authController'
+import { loginUser, registerUser } from './controllers/authController'
 import { authenticate } from './middleware/authMiddleware'
 
 export async function appRoutes(app: FastifyInstance) {
-  app.post(
-    '/create-url',
-    {
-      preHandler: authenticate,
-    },
-    createUrl,
-  )
-  app.get('/:redirectUrl', redirectUrl)
+  app.post('/api/v1/shorten-url', { preHandler: authenticate }, createShortUrl)
   app.get(
-    '/get-all-urls/:userId',
-    {
-      preHandler: authenticate,
-    },
-    getAllUrls,
+    '/api/v1/:shortCode',
+    { preHandler: authenticate },
+    redirectToOriginalUrl,
   )
   app.get(
-    '/get-url',
-    {
-      preHandler: authenticate,
-    },
-    getUrl,
+    '/api/v1/user/:userId/urls',
+    { preHandler: authenticate },
+    getAllShortUrls,
+  )
+  app.get(
+    '/api/v1/url-details',
+    { preHandler: authenticate },
+    getShortUrlDetails,
   )
   app.delete(
-    '/delete-url',
-    {
-      preHandler: authenticate,
-    },
-    deleteUrl,
+    '/apii/v1/delete-url',
+    { preHandler: authenticate },
+    deleteShortUrl,
   )
-  app.post('/register', createUser)
-  app.post('/login', login)
+  app.post('/api/v1/register', registerUser)
+  app.post('/api/v1/login', loginUser)
 }

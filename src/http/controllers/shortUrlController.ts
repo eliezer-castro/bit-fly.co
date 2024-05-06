@@ -3,7 +3,10 @@ import { z } from 'zod'
 import { prisma } from '../../lib/prisma'
 import { nanoid } from 'nanoid'
 
-export async function createUrl(request: FastifyRequest, reply: FastifyReply) {
+export async function createShortUrl(
+  request: FastifyRequest,
+  reply: FastifyReply,
+) {
   const urlSchema = z.object({
     url: z.string().url(),
     customAlias: z.string().optional(),
@@ -56,7 +59,7 @@ export async function createUrl(request: FastifyRequest, reply: FastifyReply) {
   })
 }
 
-export async function redirectUrl(
+export async function redirectToOriginalUrl(
   request: FastifyRequest,
   reply: FastifyReply,
 ) {
@@ -97,7 +100,10 @@ export async function redirectUrl(
   reply.redirect(url.long_url)
 }
 
-export async function getAllUrls(request: FastifyRequest, reply: FastifyReply) {
+export async function getAllShortUrls(
+  request: FastifyRequest,
+  reply: FastifyReply,
+) {
   const userSchema = z.object({
     userId: z.string(),
   })
@@ -128,7 +134,10 @@ export async function getAllUrls(request: FastifyRequest, reply: FastifyReply) {
   reply.send(urls)
 }
 
-export async function getUrl(request: FastifyRequest, reply: FastifyReply) {
+export async function getShortUrlDetails(
+  request: FastifyRequest,
+  reply: FastifyReply,
+) {
   const getUrlSchema = z.object({
     urlId: z.string(),
     userId: z.string(),
@@ -164,7 +173,10 @@ export async function getUrl(request: FastifyRequest, reply: FastifyReply) {
   reply.send(url)
 }
 
-export async function deleteUrl(request: FastifyRequest, reply: FastifyReply) {
+export async function deleteShortUrl(
+  request: FastifyRequest,
+  reply: FastifyReply,
+) {
   const deleteUrlSchema = z.object({
     urlId: z.string(),
     userId: z.string(),
