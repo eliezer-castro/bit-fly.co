@@ -1,25 +1,15 @@
-import jwt from 'jsonwebtoken'
 import { FastifyRequest, FastifyReply } from 'fastify'
+import { verifyToken } from '../../helpers/authUtils'
 
 export async function authenticate(
   request: FastifyRequest,
   reply: FastifyReply,
 ) {
-  const token = request.headers.authorization?.replace('Bearer ', '')
-
-  if (!token) {
-    return reply.status(401).send({ error: 'Token não fornecido' })
-  }
-
   try {
-    if (!process.env.JWT_SECRET) {
-      throw new Error('JWT_SECRET não está definido')
-    }
-    const decoded = jwt.verify(token, process.env.JWT_SECRET)
-    const userId = typeof decoded === 'string' ? decoded : decoded.userId
+    const userId = await verifyToken(request, reply)
 
     if (!userId) {
-      return reply.status(401).send({ error: 'Token inválido' })
+      return reply.status(401).send({ error: 'Token não fornecido' })
     }
 
     request.headers.user = userId
