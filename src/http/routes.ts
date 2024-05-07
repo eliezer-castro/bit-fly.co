@@ -5,7 +5,7 @@ import {
   getAllShortUrls,
   getShortUrlDetails,
   redirectToOriginalUrl,
-} from './controllers/shortUrlController'
+} from './controllers/urlController'
 import { loginUser, registerUser } from './controllers/authController'
 import { authenticate } from './middleware/authMiddleware'
 
