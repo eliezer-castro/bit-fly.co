@@ -9,8 +9,15 @@ import {
 } from './controllers/urlController'
 import { loginUser, registerUser } from './controllers/authController'
 import { authenticate } from './middleware/authMiddleware'
+import { UserRepository } from '../repositories/UserRepository'
+import { UserRepositoryImpl } from '../repositories/UserRepositoryImpl'
+import { ShortenedUrlRepository } from '../repositories/ShortenedUrlRepository'
+import { ShortenedUrlRepositoryImpl } from '../repositories/ShortenedUrlRepositoryImpl'
 
 export async function appRoutes(app: FastifyInstance) {
+  const userRepository: UserRepository = new UserRepositoryImpl()
+  const ShortenedUrlRepository: ShortenedUrlRepository =
+    new ShortenedUrlRepositoryImpl()
   app.post(
     '/api/v1/shorten-url',
     {
@@ -36,7 +43,8 @@ export async function appRoutes(app: FastifyInstance) {
         },
       },
     },
-    createShortUrl,
+    async (request, reply) =>
+      createShortUrl(request, reply, ShortenedUrlRepository, userRepository),
   )
 
   app.get(
@@ -61,7 +69,8 @@ export async function appRoutes(app: FastifyInstance) {
         },
       },
     },
-    redirectToOriginalUrl,
+    async (request, reply) =>
+      redirectToOriginalUrl(request, reply, ShortenedUrlRepository),
   )
 
   app.get(
@@ -90,7 +99,8 @@ export async function appRoutes(app: FastifyInstance) {
         },
       },
     },
-    getAllShortUrls,
+    async (request, reply) =>
+      getAllShortUrls(request, reply, ShortenedUrlRepository, userRepository),
   )
 
   app.get(
@@ -122,7 +132,13 @@ export async function appRoutes(app: FastifyInstance) {
         },
       },
     },
-    getShortUrlDetails,
+    async (request, reply) =>
+      getShortUrlDetails(
+        request,
+        reply,
+        ShortenedUrlRepository,
+        userRepository,
+      ),
   )
 
   app.delete(
@@ -135,9 +151,9 @@ export async function appRoutes(app: FastifyInstance) {
         querystring: {
           type: 'object',
           properties: {
-            urlId: { type: 'string' },
+            shortUrl: { type: 'string' },
           },
-          required: ['urlId'],
+          required: ['shortUrl'],
         },
         security: [{ BearerAuth: [] }],
         response: {
@@ -150,7 +166,8 @@ export async function appRoutes(app: FastifyInstance) {
         },
       },
     },
-    deleteShortUrl,
+    async (request, reply) =>
+      deleteShortUrl(request, reply, ShortenedUrlRepository, userRepository),
   )
 
   app.post(
@@ -177,7 +194,7 @@ export async function appRoutes(app: FastifyInstance) {
         },
       },
     },
-    registerUser,
+    async (request, reply) => registerUser(request, reply, userRepository),
   )
 
   app.post(
@@ -203,7 +220,7 @@ export async function appRoutes(app: FastifyInstance) {
         },
       },
     },
-    loginUser,
+    async (request, reply) => loginUser(request, reply, userRepository),
   )
 
   app.get(
@@ -235,6 +252,7 @@ export async function appRoutes(app: FastifyInstance) {
         },
       },
     },
-    getClickHistory,
+    async (request, reply) =>
+      getClickHistory(request, reply, ShortenedUrlRepository),
   )
 }

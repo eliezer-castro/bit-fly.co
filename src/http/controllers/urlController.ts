@@ -1,20 +1,23 @@
 import { FastifyRequest, FastifyReply } from 'fastify'
 import { z } from 'zod'
-import { prisma } from '../../lib/prisma'
 import { nanoid } from 'nanoid'
 import { verifyToken } from '../../helpers/authUtils'
 import { generateUniqueShortenedURL } from '../../helpers/generateUniqueShortenedURL'
+import { UserRepository } from '../../repositories/UserRepository'
+import { ShortenedUrlRepository } from '../../repositories/ShortenedUrlRepository'
+import { ShortenedUrl } from '../../models/ShortenedUrl'
 
 export async function createShortUrl(
   request: FastifyRequest,
   reply: FastifyReply,
+  ShortenedUrlRepository: ShortenedUrlRepository,
+  UserRepository: UserRepository,
 ) {
   const urlSchema = z.object({
     url: z.string().url(),
-    customAlias: z.string().optional(),
   })
 
-  const { url, customAlias } = urlSchema.parse(request.body)
+  const { url } = urlSchema.parse(request.body)
 
   const userId = await verifyToken(request, reply)
 
@@ -26,40 +29,22 @@ export async function createShortUrl(
     return reply.status(400).send({ error: 'Url e userId são obrigatórios' })
   }
 
-  if (customAlias) {
-    const aliasExists = await prisma.shortenedUrl.findFirst({
-      where: {
-        short_url: customAlias,
-      },
-    })
+  const existingUser = await UserRepository.findById(userId)
 
-    if (aliasExists) {
-      return reply.status(409).send({ error: 'Alias já existe' })
-    }
+  if (!existingUser) {
+    return reply.status(404).send({ error: 'Usuário não encontrado' })
   }
 
-  if (userId) {
-    const userExists = await prisma.user.findFirst({
-      where: {
-        id: userId,
-      },
-    })
+  const hash = await generateUniqueShortenedURL()
 
-    if (!userExists) {
-      return reply.status(404).send({ error: 'Usuário não encontrado' })
-    }
+  const newShortUrl: ShortenedUrl = {
+    id: nanoid(),
+    long_url: url,
+    short_url: hash,
+    user_id: userId,
   }
 
-  const hash = customAlias || (await generateUniqueShortenedURL())
-
-  await prisma.shortenedUrl.create({
-    data: {
-      id: nanoid(),
-      long_url: url,
-      short_url: hash,
-      user_id: userId,
-    },
-  })
+  await ShortenedUrlRepository.createShortenedUrl(newShortUrl)
 
   reply.status(201).send({
     shortUrl: `${request.protocol}://${request.headers.host}/${hash}`,
@@ -69,6 +54,7 @@ export async function createShortUrl(
 export async function redirectToOriginalUrl(
   request: FastifyRequest,
   reply: FastifyReply,
+  ShortenedUrlRepository: ShortenedUrlRepository,
 ) {
   const redirectSchema = z.object({
     shortCode: z.string(),
@@ -80,35 +66,25 @@ export async function redirectToOriginalUrl(
     return reply.status(400).send({ error: 'URL inválida' })
   }
 
-  const url = await prisma.shortenedUrl.findFirst({
-    where: {
-      short_url: shortCode,
-    },
-  })
+  const existingShortenedUrl =
+    await ShortenedUrlRepository.findByShortUrl(shortCode)
 
-  if (!url) {
+  if (!existingShortenedUrl) {
     return reply.status(404).send({ error: 'URL não encontrada' })
   }
 
-  await prisma.shortenedUrl.update({
-    where: {
-      short_url: shortCode,
-    },
-    data: {
-      clicks: {
-        increment: 1,
-      },
-      clickDates: {
-        push: new Date(),
-      },
-    },
-  })
-  reply.redirect(url.long_url)
+  await ShortenedUrlRepository.incrementClicksAndUpdateDate(shortCode)
+
+  const longUrl = existingShortenedUrl.long_url
+
+  reply.redirect(longUrl)
 }
 
 export async function getAllShortUrls(
   request: FastifyRequest,
   reply: FastifyReply,
+  ShortenedUrlRepository: ShortenedUrlRepository,
+  UserRepository: UserRepository,
 ) {
   const userId = await verifyToken(request, reply)
 
@@ -116,21 +92,13 @@ export async function getAllShortUrls(
     return reply.status(401).send({ error: 'Token não fornecido' })
   }
 
-  const user = await prisma.user.findFirst({
-    where: {
-      id: userId,
-    },
-  })
+  const existingUser = await UserRepository.findById(userId)
 
-  if (!user) {
+  if (!existingUser) {
     return reply.status(404).send({ error: 'Usuário não encontrado' })
   }
 
-  const urls = await prisma.shortenedUrl.findMany({
-    where: {
-      user_id: userId,
-    },
-  })
+  const urls = await ShortenedUrlRepository.findAllByUserId(userId)
 
   reply.send(urls)
 }
@@ -138,6 +106,8 @@ export async function getAllShortUrls(
 export async function getShortUrlDetails(
   request: FastifyRequest,
   reply: FastifyReply,
+  ShortenedUrlRepository: ShortenedUrlRepository,
+  UserRepository: UserRepository,
 ) {
   const getUrlSchema = z.object({
     shortCode: z.string(),
@@ -154,83 +124,64 @@ export async function getShortUrlDetails(
   if (!shortCode) {
     return reply.status(400).send({ error: 'id e userId são obrigatórios' })
   }
+  const existingUser = await UserRepository.findById(userId)
 
-  const user = await prisma.user.findFirst({
-    where: {
-      id: userId,
-    },
-  })
-
-  if (!user) {
+  if (!existingUser) {
     return reply.status(404).send({ error: 'Usuário não encontrado' })
   }
 
-  const url = await prisma.shortenedUrl.findFirst({
-    where: {
-      short_url: shortCode,
-      user_id: userId,
-    },
-  })
+  const existingShortenedUrl =
+    await ShortenedUrlRepository.findByShortUrl(shortCode)
 
-  if (!url) {
+  if (!existingShortenedUrl) {
     return reply.status(404).send({ error: 'URL não encontrada' })
   }
 
-  reply.send(url)
+  reply.send(existingShortenedUrl)
 }
 
 export async function deleteShortUrl(
   request: FastifyRequest,
   reply: FastifyReply,
+  ShortenedUrlRepository: ShortenedUrlRepository,
+  UserRepository: UserRepository,
 ) {
   const deleteUrlSchema = z.object({
-    urlId: z.string(),
+    shortUrl: z.string(),
   })
 
-  const { urlId } = deleteUrlSchema.parse(request.query)
+  const { shortUrl } = deleteUrlSchema.parse(request.query)
   const userId = await verifyToken(request, reply)
 
   if (!userId) {
     return reply.status(401).send({ error: 'Token não fornecido' })
   }
 
-  if (!urlId) {
-    return reply.status(400).send({ error: 'urlId é obrigatório' })
+  if (!shortUrl) {
+    return reply.status(400).send({ error: 'shortUrl é obrigatório' })
   }
 
-  const user = await prisma.user.findFirst({
-    where: {
-      id: userId,
-    },
-  })
+  const existingUser = await UserRepository.findById(userId)
 
-  if (!user) {
+  if (!existingUser) {
     return reply.status(404).send({ error: 'Usuário não encontrado' })
   }
 
-  const url = await prisma.shortenedUrl.findFirst({
-    where: {
-      id: urlId,
-      user_id: userId,
-    },
-  })
+  const existingShortenedUrl =
+    await ShortenedUrlRepository.findByShortUrl(shortUrl)
 
-  if (!url) {
+  if (!existingShortenedUrl) {
     return reply.status(404).send({ error: 'URL não encontrada' })
   }
 
-  await prisma.shortenedUrl.delete({
-    where: {
-      id: urlId,
-      user_id: userId,
-    },
-  })
+  await ShortenedUrlRepository.deleteShortenedUrl(shortUrl, userId)
   reply.send({ message: 'URL deletada com sucesso' })
 }
 
 export async function getClickHistory(
   request: FastifyRequest,
   reply: FastifyReply,
+  ShortenedUrlRepository: ShortenedUrlRepository,
 ) {
   const shortCodeSchema = z.object({
     shortCode: z.string(),
@@ -241,15 +192,7 @@ export async function getClickHistory(
     return reply.status(401).send({ error: 'shortCode não fornecido' })
   }
 
-  const clickHistory = await prisma.shortenedUrl.findFirst({
-    where: {
-      short_url: shortCode,
-    },
-    select: {
-      clicks: true,
-      clickDates: true,
-    },
-  })
+  const clickHistory = await ShortenedUrlRepository.findByShortUrl(shortCode)
 
   if (!clickHistory) {
     return reply.status(404).send({ error: 'URL não encontrada' })
@@ -257,7 +200,7 @@ export async function getClickHistory(
 
   const clickDatesCount: Record<string, number> = {}
 
-  clickHistory.clickDates.forEach((date) => {
+  clickHistory.clickDates?.forEach((date) => {
     const dateString = date.toISOString().split('T')[0]
     clickDatesCount[dateString] = (clickDatesCount[dateString] || 0) + 1
   })
