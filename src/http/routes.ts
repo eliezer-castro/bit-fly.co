@@ -105,7 +105,7 @@ export async function appRoutes(app: FastifyInstance) {
           properties: {
             urlId: { type: 'string' },
           },
-          required: ['urlId'],
+          required: ['shortCode'],
         },
         security: [{ BearerAuth: [] }],
         response: {
@@ -207,7 +207,7 @@ export async function appRoutes(app: FastifyInstance) {
   )
 
   app.get(
-    '/api/v1/shortUrl/:shortCode/clickHistory',
+    '/api/v1/shortCode/:shortCode/clickHistory',
     {
       preHandler: authenticate,
       schema: {

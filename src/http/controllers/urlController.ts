@@ -140,10 +140,10 @@ export async function getShortUrlDetails(
   reply: FastifyReply,
 ) {
   const getUrlSchema = z.object({
-    urlId: z.string(),
+    shortCode: z.string(),
   })
 
-  const { urlId } = getUrlSchema.parse(request.query)
+  const { shortCode } = getUrlSchema.parse(request.query)
 
   const userId = await verifyToken(request, reply)
 
@@ -151,7 +151,7 @@ export async function getShortUrlDetails(
     return reply.status(401).send({ error: 'Token não fornecido' })
   }
 
-  if (!urlId) {
+  if (!shortCode) {
     return reply.status(400).send({ error: 'id e userId são obrigatórios' })
   }
 
@@ -167,7 +167,7 @@ export async function getShortUrlDetails(
 
   const url = await prisma.shortenedUrl.findFirst({
     where: {
-      id: urlId,
+      short_url: shortCode,
       user_id: userId,
     },
   })
