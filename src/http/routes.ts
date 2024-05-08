@@ -5,6 +5,7 @@ import {
   getAllShortUrls,
   getShortUrlDetails,
   redirectToOriginalUrl,
+  getClickHistory,
 } from './controllers/urlController'
 import { loginUser, registerUser } from './controllers/authController'
 import { authenticate } from './middleware/authMiddleware'
@@ -203,5 +204,37 @@ export async function appRoutes(app: FastifyInstance) {
       },
     },
     loginUser,
+  )
+
+  app.get(
+    '/api/v1/shortUrl/:shortCode/clickHistory',
+    {
+      preHandler: authenticate,
+      schema: {
+        tags: ['Shorten URL'],
+        security: [{ BearerAuth: [] }],
+        response: {
+          200: {
+            type: 'object',
+            properties: {
+              totalClicks: {
+                type: 'integer',
+                description: 'Número total de cliques',
+              },
+
+              clickDates: {
+                type: 'object',
+                description: 'Número de cliques por data',
+                additionalProperties: {
+                  type: 'integer',
+                  description: 'Número de cliques em uma determinada data',
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+    getClickHistory,
   )
 }

@@ -3,6 +3,7 @@ import { z } from 'zod'
 import { prisma } from '../../lib/prisma'
 import { nanoid } from 'nanoid'
 import { verifyToken } from '../../helpers/authUtils'
+import { generateUniqueShortenedURL } from '../../helpers/generateUniqueShortenedURL'
 
 export async function createShortUrl(
   request: FastifyRequest,
@@ -49,19 +50,19 @@ export async function createShortUrl(
     }
   }
 
-  const shortUrl = customAlias || Math.random().toString(36).substring(2, 7)
+  const hash = customAlias || (await generateUniqueShortenedURL())
 
   await prisma.shortenedUrl.create({
     data: {
       id: nanoid(),
       long_url: url,
-      short_url: shortUrl,
+      short_url: hash,
       user_id: userId,
     },
   })
 
   reply.status(201).send({
-    shortUrl: `${request.protocol}://${request.headers.host}/${shortUrl}`,
+    shortUrl: `${request.protocol}://${request.headers.host}/${hash}`,
   })
 }
 
@@ -97,9 +98,11 @@ export async function redirectToOriginalUrl(
       clicks: {
         increment: 1,
       },
+      clickDates: {
+        push: new Date(),
+      },
     },
   })
-
   reply.redirect(url.long_url)
 }
 
@@ -223,4 +226,44 @@ export async function deleteShortUrl(
     },
   })
   reply.send({ message: 'URL deletada com sucesso' })
+}
+
+export async function getClickHistory(
+  request: FastifyRequest,
+  reply: FastifyReply,
+) {
+  const shortCodeSchema = z.object({
+    shortCode: z.string(),
+  })
+  const { shortCode } = shortCodeSchema.parse(request.params)
+
+  if (!shortCode) {
+    return reply.status(401).send({ error: 'shortCode não fornecido' })
+  }
+
+  const clickHistory = await prisma.shortenedUrl.findFirst({
+    where: {
+      short_url: shortCode,
+    },
+    select: {
+      clicks: true,
+      clickDates: true,
+    },
+  })
+
+  if (!clickHistory) {
+    return reply.status(404).send({ error: 'URL não encontrada' })
+  }
+
+  const clickDatesCount: Record<string, number> = {}
+
+  clickHistory.clickDates.forEach((date) => {
+    const dateString = date.toISOString().split('T')[0]
+    clickDatesCount[dateString] = (clickDatesCount[dateString] || 0) + 1
+  })
+
+  reply.send({
+    totalClicks: clickHistory.clicks,
+    clickDates: clickDatesCount,
+  })
 }
