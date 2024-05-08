@@ -3,8 +3,8 @@ import { z } from 'zod'
 import bcrypt from 'bcryptjs'
 import { nanoid } from 'nanoid'
 import jwt from 'jsonwebtoken'
-import { UserRepository } from '../../repositories/UserRepository'
-import { User } from '../../models/User'
+import { UserRepository } from '../repositories/UserRepository'
+import { User } from '../models/User'
 
 export async function registerUser(
   request: FastifyRequest,

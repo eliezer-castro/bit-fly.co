@@ -1,5 +1,5 @@
 import { FastifyRequest, FastifyReply } from 'fastify'
-import { verifyToken } from '../../helpers/authUtils'
+import { verifyToken } from '../services/authUtils'
 
 export async function authenticate(
   request: FastifyRequest,

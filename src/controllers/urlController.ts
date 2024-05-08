@@ -1,11 +1,11 @@
 import { FastifyRequest, FastifyReply } from 'fastify'
 import { z } from 'zod'
 import { nanoid } from 'nanoid'
-import { verifyToken } from '../../helpers/authUtils'
-import { generateUniqueShortenedURL } from '../../helpers/generateUniqueShortenedURL'
-import { UserRepository } from '../../repositories/UserRepository'
-import { ShortenedUrlRepository } from '../../repositories/ShortenedUrlRepository'
-import { ShortenedUrl } from '../../models/ShortenedUrl'
+import { verifyToken } from '../services/authUtils'
+import { generateUniqueShortenedURL } from '../services/generateUniqueShortenedURL'
+import { UserRepository } from '../repositories/UserRepository'
+import { ShortenedUrlRepository } from '../repositories/ShortenedUrlRepository'
+import { ShortenedUrl } from '../models/ShortenedUrl'
 
 export async function createShortUrl(
   request: FastifyRequest,
