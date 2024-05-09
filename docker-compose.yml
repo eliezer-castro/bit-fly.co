@@ -4,8 +4,8 @@ services:
   pg:
     image: bitnami/postgresql
     ports:
-      - 5432:5432
+      - "5432:5432"
     environment:
-      - POSTGRESQL_USERNAME=docker
-      - POSTGRESQL_PASSWORD=docker
-      - POSTGRESQL_DATABASE=encurtadorurlapi
+      - POSTGRES_DB=bitfly_db
+      - POSTGRES_USER=bitfly
+      - POSTGRES_PASSWORD=bitfly@123!
