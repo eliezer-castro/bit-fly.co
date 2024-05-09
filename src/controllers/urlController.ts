@@ -15,9 +15,11 @@ export async function createShortUrl(
 ) {
   const urlSchema = z.object({
     url: z.string().url(),
+    title: z.string().optional(),
+    alias: z.string().optional(),
   })
 
-  const { url } = urlSchema.parse(request.body)
+  const { url, title, alias } = urlSchema.parse(request.body)
 
   const userId = await verifyToken(request, reply)
 
@@ -34,12 +36,20 @@ export async function createShortUrl(
   if (!existingUser) {
     return reply.status(404).send({ error: 'Usuário não encontrado' })
   }
+  if (alias) {
+    const existingShortenedUrl =
+      await ShortenedUrlRepository.findByShortUrl(alias)
+    if (existingShortenedUrl) {
+      return reply.status(400).send({ error: 'Alias já existe' })
+    }
+  }
 
-  const hash = await generateUniqueShortenedURL()
+  const hash = alias || (await generateUniqueShortenedURL())
 
   const newShortUrl: ShortenedUrl = {
     id: nanoid(),
     long_url: url,
+    title: title || '',
     short_url: hash,
     user_id: userId,
   }

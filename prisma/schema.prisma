@@ -21,6 +21,7 @@ model User {
 model ShortenedUrl {
   id         String     @id @default(uuid())
   long_url   String
+  title      String
   short_url  String     @unique
   clicks     Int        @default(0)
   clickDates DateTime[]

@@ -1,6 +1,7 @@
 export interface ShortenedUrl {
   id: string
   long_url: string
+  title: string
   short_url: string
   clicks?: number
   clickDates?: Date[]
