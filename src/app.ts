@@ -1,5 +1,7 @@
 import fastify from 'fastify'
-import { appRoutes } from './http/routes'
+import fastifyCors from '@fastify/cors'
+import { appRoutes } from './routes'
+
 export const app = fastify()
 
 app.register(import('@fastify/swagger'), {
@@ -17,5 +19,6 @@ app.register(import('@fastify/swagger'), {
 app.register(import('@fastify/swagger-ui'), {
   routePrefix: '/docs',
 })
+app.register(fastifyCors)
 
 app.register(appRoutes)
