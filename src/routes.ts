@@ -89,6 +89,19 @@ export async function appRoutes(app: FastifyInstance) {
       schema: {
         tags: ['Shorten URL'],
         security: [{ BearerAuth: [] }],
+        querystring: {
+          type: 'object',
+          properties: {
+            limit: { type: 'integer' },
+            orderBy: {
+              type: 'string',
+              enum: ['clicks', 'created_at', 'updated_at'],
+            },
+            orderDir: { type: 'string', enum: ['asc', 'desc'] },
+            dateFrom: { type: 'string', format: 'date-time' },
+            dateTo: { type: 'string', format: 'date-time' },
+          },
+        },
         response: {
           200: {
             type: 'array',

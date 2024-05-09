@@ -153,6 +153,18 @@ export async function getAllShortUrls(
   ShortenedUrlRepository: ShortenedUrlRepository,
   UserRepository: UserRepository,
 ) {
+  const filter = z.object({
+    limit: z.number().optional(),
+    orderBy: z.enum(['clicks', 'created_at', 'updated_at']).optional(),
+    orderDir: z.enum(['asc', 'desc']).optional(),
+    dateFrom: z.string().optional(),
+    dateTo: z.string().optional(),
+  })
+
+  const { limit, orderBy, orderDir, dateFrom, dateTo } = filter.parse(
+    request.query,
+  )
+
   const userId = await verifyToken(request, reply)
 
   if (!userId) {
@@ -165,7 +177,13 @@ export async function getAllShortUrls(
     return reply.status(404).send({ error: 'Usuário não encontrado' })
   }
 
-  const urls = await ShortenedUrlRepository.findAllByUserId(userId)
+  const urls = await ShortenedUrlRepository.findAllByUserId(userId, {
+    limit,
+    orderBy,
+    orderDir,
+    dateFrom,
+    dateTo,
+  })
 
   reply.send(urls)
 }
