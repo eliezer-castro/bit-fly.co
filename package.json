@@ -32,5 +32,8 @@
     "jsonwebtoken": "^9.0.2",
     "nanoid": "^5.0.7",
     "zod": "^3.23.6"
+  },
+  "engines": {
+    "node": "20.x"
   }
 }
