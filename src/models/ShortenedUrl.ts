@@ -6,5 +6,6 @@ export interface ShortenedUrl {
   clicks?: number
   clickDates?: Date[]
   created_at?: Date
+  updated_at?: Date | null
   user_id: string
 }

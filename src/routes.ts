@@ -6,6 +6,7 @@ import {
   getShortUrlDetails,
   redirectToOriginalUrl,
   getClickHistory,
+  updateShortUrl,
 } from './controllers/urlController'
 import { loginUser, registerUser } from './controllers/authController'
 import { authenticate } from './middleware/authMiddleware'
@@ -45,6 +46,13 @@ export async function appRoutes(app: FastifyInstance) {
     },
     async (request, reply) =>
       createShortUrl(request, reply, ShortenedUrlRepository, userRepository),
+  )
+
+  app.put(
+    '/api/v1/update-url',
+    { preHandler: authenticate },
+    async (request, reply) =>
+      updateShortUrl(request, reply, ShortenedUrlRepository, userRepository),
   )
 
   app.get(
@@ -88,11 +96,13 @@ export async function appRoutes(app: FastifyInstance) {
               type: 'object',
               properties: {
                 id: { type: 'string' },
-                long_url: { type: 'string' },
-                short_url: { type: 'string' },
+                title: { type: 'string' },
+                long_url: { type: 'string', format: 'uri' },
+                short_url: { type: 'string', format: 'uri' },
                 clicks: { type: 'integer' },
+                clickDates: { type: 'array' },
                 created_at: { type: 'string', format: 'date-time' },
-                user_id: { type: 'string' },
+                updated_at: { type: 'string', format: 'date-time' },
               },
             },
           },
@@ -123,10 +133,13 @@ export async function appRoutes(app: FastifyInstance) {
             type: 'object',
             properties: {
               id: { type: 'string' },
+              title: { type: 'string' },
               long_url: { type: 'string', format: 'uri' },
               short_url: { type: 'string', format: 'uri' },
               clicks: { type: 'integer' },
+              clickDates: { type: 'array' },
               created_at: { type: 'string', format: 'date-time' },
+              updated_at: { type: 'string', format: 'date-time' },
             },
           },
         },

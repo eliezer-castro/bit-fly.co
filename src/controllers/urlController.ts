@@ -61,6 +61,63 @@ export async function createShortUrl(
   })
 }
 
+export async function updateShortUrl(
+  request: FastifyRequest,
+  reply: FastifyReply,
+  shortenedUrlRepository: ShortenedUrlRepository,
+  userRepository: UserRepository,
+) {
+  const updateUrlSchema = z.object({
+    shortUrlId: z.string(),
+    newValueShortenedUrl: z.string().optional(),
+    newValuetitle: z.string().optional(),
+  })
+
+  const { shortUrlId, newValueShortenedUrl, newValuetitle } =
+    updateUrlSchema.parse(request.body)
+
+  const userId = await verifyToken(request, reply)
+  if (!userId) {
+    return reply.status(401).send({ error: 'Token não fornecido' })
+  }
+
+  const existingUser = await userRepository.findById(userId)
+  if (!existingUser) {
+    return reply.status(404).send({ error: 'Usuário não encontrado' })
+  }
+
+  const existingShortenedUrl =
+    await shortenedUrlRepository.findByShortId(shortUrlId)
+  if (!existingShortenedUrl) {
+    return reply.status(404).send({ error: 'URL não encontrada' })
+  }
+
+  if (!newValueShortenedUrl && !newValuetitle) {
+    return reply.status(400).send({ error: 'Informe ao menos um valor' })
+  }
+
+  const newShortenedUrl = newValueShortenedUrl || existingShortenedUrl.short_url
+  const newTitle = newValuetitle || existingShortenedUrl.title
+
+  const existingNewValueShortenedUrl =
+    await shortenedUrlRepository.findByShortUrl(newShortenedUrl)
+  if (
+    existingNewValueShortenedUrl &&
+    existingNewValueShortenedUrl.id !== existingShortenedUrl.id
+  ) {
+    return reply.status(400).send({ error: 'URL já existe' })
+  }
+
+  await shortenedUrlRepository.updateShortenedUrl(
+    existingShortenedUrl.id,
+    userId,
+    newShortenedUrl,
+    newTitle,
+  )
+
+  reply.send({ message: 'URL atualizada com sucesso' })
+}
+
 export async function redirectToOriginalUrl(
   request: FastifyRequest,
   reply: FastifyReply,

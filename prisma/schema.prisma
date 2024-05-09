@@ -20,12 +20,13 @@ model User {
 
 model ShortenedUrl {
   id         String     @id @default(uuid())
-  long_url   String
   title      String
+  long_url   String
   short_url  String     @unique
   clicks     Int        @default(0)
   clickDates DateTime[]
   created_at DateTime   @default(now())
+  updated_at DateTime?  @updatedAt
   user       User       @relation(fields: [user_id], references: [id])
   user_id    String
 

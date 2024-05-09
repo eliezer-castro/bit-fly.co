@@ -9,6 +9,12 @@ export class ShortenedUrlRepositoryImpl implements ShortenedUrlRepository {
     })
   }
 
+  findByShortId(shortId: string): Promise<ShortenedUrl | null> {
+    return this.prisma.shortenedUrl.findFirst({
+      where: { id: shortId },
+    })
+  }
+
   findAllByUserId(userId: string): Promise<ShortenedUrl[]> {
     return this.prisma.shortenedUrl.findMany({
       where: {
@@ -42,6 +48,24 @@ export class ShortenedUrlRepositoryImpl implements ShortenedUrlRepository {
       where: {
         short_url: shortCode,
         user_id: userId,
+      },
+    })
+  }
+
+  async updateShortenedUrl(
+    shortUrlId: string,
+    userId: string,
+    newValueShortenedUrl: string,
+    newValuetitle: string,
+  ): Promise<void> {
+    await this.prisma.shortenedUrl.update({
+      where: {
+        id: shortUrlId,
+        user_id: userId,
+      },
+      data: {
+        short_url: newValueShortenedUrl,
+        title: newValuetitle,
       },
     })
   }
