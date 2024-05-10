@@ -198,7 +198,7 @@ export async function getShortUrlDetails(
     shortCode: z.string(),
   })
 
-  const { shortCode } = getUrlSchema.parse(request.query)
+  const { shortCode } = getUrlSchema.parse(request.params)
 
   const userId = await verifyToken(request, reply)
 

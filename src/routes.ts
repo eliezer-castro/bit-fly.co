@@ -29,7 +29,8 @@ export async function appRoutes(app: FastifyInstance) {
           type: 'object',
           properties: {
             url: { type: 'string', format: 'uri' },
-            customAlias: { type: 'string' },
+            title: { type: 'string' },
+            alias: { type: 'string' },
           },
           required: ['url'],
         },
@@ -127,16 +128,16 @@ export async function appRoutes(app: FastifyInstance) {
   )
 
   app.get(
-    '/api/v1/url-details',
+    '/api/v1/details/:shortCode',
     {
       preHandler: authenticate,
 
       schema: {
         tags: ['Shorten URL'],
-        querystring: {
+        params: {
           type: 'object',
           properties: {
-            urlId: { type: 'string' },
+            shortCode: { type: 'string' },
           },
           required: ['shortCode'],
         },
