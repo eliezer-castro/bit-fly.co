@@ -25,8 +25,6 @@ app.register(fastifyCors)
 app.register(appRoutes)
 
 app.setErrorHandler(function (error, _, reply) {
-  console.log('A instância do erro é: ', error.constructor.name)
-
   if (error instanceof ZodError) {
     const formatIssues = error.issues.map((issue) => ({
       path: issue.path,
