@@ -206,7 +206,7 @@ export async function appRoutes(app: FastifyInstance) {
           type: 'object',
           properties: {
             name: { type: 'string' },
-            email: { type: 'string', format: 'email' },
+            email: { type: 'string' },
             password: { type: 'string' },
           },
           required: ['name', 'email', 'password'],
@@ -221,7 +221,7 @@ export async function appRoutes(app: FastifyInstance) {
         },
       },
     },
-    async (request, reply) => registerUser(request, reply, userRepository),
+    async (request, reply) => registerUser(request, reply),
   )
 
   app.post(
@@ -232,7 +232,7 @@ export async function appRoutes(app: FastifyInstance) {
         body: {
           type: 'object',
           properties: {
-            email: { type: 'string', format: 'email' },
+            email: { type: 'string' },
             password: { type: 'string' },
           },
           required: ['email', 'password'],

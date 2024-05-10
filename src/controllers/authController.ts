@@ -4,6 +4,7 @@ import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
 import { UserRepository } from '../repositories/UserRepository'
 import { registerUseCase } from '../use-cases/register'
+import { UserAlreadyExists } from '../use-cases/errors/user-already-exists'
 
 export async function registerUser(
   request: FastifyRequest,
@@ -12,7 +13,7 @@ export async function registerUser(
   const userSchema = z.object({
     name: z.string(),
     email: z.string().email(),
-    password: z.string().min(8),
+    password: z.string().min(6),
   })
 
   const { name, email, password } = userSchema.parse(request.body)
@@ -20,7 +21,11 @@ export async function registerUser(
   try {
     await registerUseCase({ name, email, password })
   } catch (error) {
-    return reply.status(409).send({})
+    if (error instanceof UserAlreadyExists) {
+      return reply.status(409).send(error.message)
+    }
+
+    throw error
   }
 }
 
