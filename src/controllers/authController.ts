@@ -1,15 +1,13 @@
 import { FastifyRequest, FastifyReply } from 'fastify'
 import { z } from 'zod'
 import bcrypt from 'bcryptjs'
-import { nanoid } from 'nanoid'
 import jwt from 'jsonwebtoken'
 import { UserRepository } from '../repositories/UserRepository'
-import { User } from '../models/User'
+import { registerUseCase } from '../use-cases/register'
 
 export async function registerUser(
   request: FastifyRequest,
   reply: FastifyReply,
-  UserRepository: UserRepository,
 ) {
   const userSchema = z.object({
     name: z.string(),
@@ -19,31 +17,11 @@ export async function registerUser(
 
   const { name, email, password } = userSchema.parse(request.body)
 
-  if (!name || !email || !password) {
-    return reply
-      .status(400)
-      .send({ error: 'Nome, email e senha são obrigatórios' })
+  try {
+    await registerUseCase({ name, email, password })
+  } catch (error) {
+    return reply.status(409).send({})
   }
-
-  const existingUser = await UserRepository.findByEmail(email)
-
-  if (existingUser) {
-    return reply.status(409).send({
-      error: 'Email já cadastrado',
-    })
-  }
-
-  const newUser: User = {
-    id: nanoid(),
-    name,
-    email,
-    password: bcrypt.hashSync(password, 8),
-    created_at: new Date(),
-  }
-
-  await UserRepository.createUser(newUser)
-
-  return reply.status(201).send({ message: 'Usuário criado com sucesso' })
 }
 
 export async function loginUser(
