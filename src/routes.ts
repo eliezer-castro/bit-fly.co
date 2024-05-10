@@ -247,7 +247,7 @@ export async function appRoutes(app: FastifyInstance) {
         },
       },
     },
-    async (request, reply) => loginUser(request, reply, userRepository),
+    async (request, reply) => loginUser(request, reply),
   )
 
   app.get(

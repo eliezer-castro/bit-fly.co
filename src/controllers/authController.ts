@@ -1,10 +1,10 @@
 import { FastifyRequest, FastifyReply } from 'fastify'
 import { z } from 'zod'
-import bcrypt from 'bcryptjs'
-import jwt from 'jsonwebtoken'
-import { UserRepository } from '../repositories/UserRepository'
 import { registerUseCase } from '../use-cases/register'
 import { UserAlreadyExists } from '../use-cases/errors/user-already-exists'
+import { loginUseCase } from '../use-cases/login'
+import { UserNotExists } from '../use-cases/errors/user-not-exists'
+import { InvalidPassword } from '../use-cases/errors/invalidPassword'
 
 export async function registerUser(
   request: FastifyRequest,
@@ -22,48 +22,31 @@ export async function registerUser(
     await registerUseCase({ name, email, password })
   } catch (error) {
     if (error instanceof UserAlreadyExists) {
-      return reply.status(409).send(error.message)
+      return reply.status(409).send({ message: error.message })
     }
 
     throw error
   }
 }
 
-export async function loginUser(
-  request: FastifyRequest,
-  reply: FastifyReply,
-  userRepository: UserRepository,
-) {
+export async function loginUser(request: FastifyRequest, reply: FastifyReply) {
   const loginSchema = z.object({
     email: z.string().email(),
-    password: z.string().min(8),
+    password: z.string().min(6),
   })
 
   const { email, password } = loginSchema.parse(request.body)
 
-  if (!email || !password) {
-    return reply.status(400).send({ error: 'Email e senha são obrigatórios' })
+  try {
+    const login = await loginUseCase({ email, password })
+    reply.status(200).send({ token: login })
+  } catch (error) {
+    if (error instanceof UserNotExists) {
+      return reply.status(404).send({ message: error.message })
+    }
+    if (error instanceof InvalidPassword) {
+      return reply.status(401).send({ message: error.message })
+    }
+    throw error
   }
-
-  const user = await userRepository.findByEmail(email)
-
-  if (!user) {
-    return reply.status(404).send({ error: 'Usuário não encontrado' })
-  }
-
-  const passwordIsValid = bcrypt.compareSync(password, user.password)
-
-  if (!passwordIsValid) {
-    return reply.status(401).send({ error: 'Senha inválida' })
-  }
-
-  if (!process.env.JWT_SECRET) {
-    throw new Error('JWT_SECRET não está definido')
-  }
-
-  const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, {
-    expiresIn: '1h',
-  })
-
-  return reply.send({ token })
 }
