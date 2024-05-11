@@ -1,10 +1,11 @@
 import { FastifyRequest, FastifyReply } from 'fastify'
 import { z } from 'zod'
-import { RegisterUseCase } from '../use-cases/register'
 import { UserAlreadyExists } from '../use-cases/errors/user-already-exists'
+import { RegisterUseCase } from '../use-cases/register'
 import { LoginUseCase } from '../use-cases/login'
 import { UserNotExists } from '../use-cases/errors/user-not-exists'
 import { InvalidPassword } from '../use-cases/errors/invalidPassword'
+import { UserRepositoryImpl } from '@/repositories/user-repository-impl'
 
 export async function registerUser(
   request: FastifyRequest,
@@ -19,7 +20,10 @@ export async function registerUser(
   const { name, email, password } = userSchema.parse(request.body)
 
   try {
-    await RegisterUseCase({ name, email, password })
+    const userRepository = new UserRepositoryImpl()
+    const registerUseCase = new RegisterUseCase(userRepository)
+    await registerUseCase.execute({ name, email, password })
+    reply.status(201).send({ message: 'Usuário criado com sucesso' })
   } catch (error) {
     if (error instanceof UserAlreadyExists) {
       return reply.status(409).send({ message: error.message })
@@ -38,7 +42,9 @@ export async function loginUser(request: FastifyRequest, reply: FastifyReply) {
   const { email, password } = loginSchema.parse(request.body)
 
   try {
-    const login = await LoginUseCase({ email, password })
+    const userRepository = new UserRepositoryImpl()
+    const loginUseCase = new LoginUseCase(userRepository)
+    const login = await loginUseCase.execute({ email, password })
     reply.status(200).send({ token: login })
   } catch (error) {
     if (error instanceof UserNotExists) {

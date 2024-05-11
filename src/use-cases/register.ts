@@ -1,8 +1,8 @@
 import bcrypt from 'bcryptjs'
 import { nanoid } from 'nanoid'
-import { UserRepositoryImpl } from '../repositories/UserRepositoryImpl'
 import { User } from '../models/User'
 import { UserAlreadyExists } from './errors/user-already-exists'
+import { UserRepository } from '@/repositories/user-repository'
 
 interface RegisterUseCaseInterface {
   name: string
@@ -10,26 +10,25 @@ interface RegisterUseCaseInterface {
   password: string
 }
 
-export async function RegisterUseCase({
-  name,
-  email,
-  password,
-}: RegisterUseCaseInterface) {
-  const userRepositoryImpl = new UserRepositoryImpl()
+export class RegisterUseCase {
+  // eslint-disable-next-line
+  constructor(private userRepository: UserRepository) { }
 
-  const existingUser = await userRepositoryImpl.findByEmail(email)
+  async execute({ name, email, password }: RegisterUseCaseInterface) {
+    const existingUser = await this.userRepository.findByEmail(email)
 
-  if (existingUser) {
-    throw new UserAlreadyExists()
+    if (existingUser) {
+      throw new UserAlreadyExists()
+    }
+
+    const newUser: User = {
+      id: nanoid(),
+      name,
+      email,
+      password: bcrypt.hashSync(password, 8),
+      created_at: new Date(),
+    }
+
+    await this.userRepository.createUser(newUser)
   }
-
-  const newUser: User = {
-    id: nanoid(),
-    name,
-    email,
-    password: bcrypt.hashSync(password, 8),
-    created_at: new Date(),
-  }
-
-  await userRepositoryImpl.createUser(newUser)
 }
