@@ -9,7 +9,7 @@ interface LoginUseCaseInterface {
   password: string
 }
 
-export async function loginUseCase({ email, password }: LoginUseCaseInterface) {
+export async function LoginUseCase({ email, password }: LoginUseCaseInterface) {
   const userRepository = new UserRepositoryImpl()
 
   const existingUser = await userRepository.findByEmail(email)

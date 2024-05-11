@@ -10,7 +10,7 @@ interface RegisterUseCaseInterface {
   password: string
 }
 
-export async function registerUseCase({
+export async function RegisterUseCase({
   name,
   email,
   password,

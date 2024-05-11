@@ -1,8 +1,8 @@
 import { FastifyRequest, FastifyReply } from 'fastify'
 import { z } from 'zod'
-import { registerUseCase } from '../use-cases/register'
+import { RegisterUseCase } from '../use-cases/register'
 import { UserAlreadyExists } from '../use-cases/errors/user-already-exists'
-import { loginUseCase } from '../use-cases/login'
+import { LoginUseCase } from '../use-cases/login'
 import { UserNotExists } from '../use-cases/errors/user-not-exists'
 import { InvalidPassword } from '../use-cases/errors/invalidPassword'
 
@@ -19,7 +19,7 @@ export async function registerUser(
   const { name, email, password } = userSchema.parse(request.body)
 
   try {
-    await registerUseCase({ name, email, password })
+    await RegisterUseCase({ name, email, password })
   } catch (error) {
     if (error instanceof UserAlreadyExists) {
       return reply.status(409).send({ message: error.message })
@@ -38,7 +38,7 @@ export async function loginUser(request: FastifyRequest, reply: FastifyReply) {
   const { email, password } = loginSchema.parse(request.body)
 
   try {
-    const login = await loginUseCase({ email, password })
+    const login = await LoginUseCase({ email, password })
     reply.status(200).send({ token: login })
   } catch (error) {
     if (error instanceof UserNotExists) {
