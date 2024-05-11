@@ -11,10 +11,10 @@ import {
 } from './controllers/urlController'
 import { loginUser, registerUser } from './controllers/authController'
 import { authenticate } from './middleware/authMiddleware'
-import { UserRepository } from './repositories/UserRepository'
-import { UserRepositoryImpl } from './repositories/UserRepositoryImpl'
-import { ShortenedUrlRepository } from './repositories/ShortenedUrlRepository'
-import { ShortenedUrlRepositoryImpl } from './repositories/ShortenedUrlRepositoryImpl'
+import { UserRepository } from './repositories/user-repository'
+import { UserRepositoryImpl } from './repositories/user-repository-impl'
+import { ShortenedUrlRepository } from './repositories/shortened-url-repository'
+import { ShortenedUrlRepositoryImpl } from './repositories/shortened-url-repository-impl'
 
 export async function appRoutes(app: FastifyInstance) {
   const userRepository: UserRepository = new UserRepositoryImpl()
