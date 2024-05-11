@@ -1,5 +1,5 @@
 import { PrismaClient, Prisma } from '@prisma/client'
-import { ShortenedUrlRepository } from './ShortenedUrlRepository'
+import { ShortenedUrlRepository } from './shortened-url-repository'
 import { ShortenedUrl } from '../models/ShortenedUrl'
 
 export class ShortenedUrlRepositoryImpl implements ShortenedUrlRepository {
