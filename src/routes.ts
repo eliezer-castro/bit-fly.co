@@ -7,6 +7,7 @@ import {
   redirectToOriginalUrl,
   getClickHistory,
   updateShortUrl,
+  generateSuggestion,
 } from './controllers/urlController'
 import { loginUser, registerUser } from './controllers/authController'
 import { authenticate } from './middleware/authMiddleware'
@@ -281,5 +282,17 @@ export async function appRoutes(app: FastifyInstance) {
     },
     async (request, reply) =>
       getClickHistory(request, reply, ShortenedUrlRepository),
+  )
+
+  app.post(
+    '/api/v1/generate-suggestion',
+    { preHandler: authenticate },
+    async (request, reply) =>
+      generateSuggestion(
+        request,
+        reply,
+        ShortenedUrlRepository,
+        userRepository,
+      ),
   )
 }

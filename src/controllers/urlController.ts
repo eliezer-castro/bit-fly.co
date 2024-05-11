@@ -6,6 +6,7 @@ import { generateUniqueShortenedURL } from '../services/generateUniqueShortenedU
 import { UserRepository } from '../repositories/UserRepository'
 import { ShortenedUrlRepository } from '../repositories/ShortenedUrlRepository'
 import { ShortenedUrl } from '../models/ShortenedUrl'
+import { getUniqueSuggestion } from '../services/suggestionService'
 
 export async function createShortUrl(
   request: FastifyRequest,
@@ -294,4 +295,53 @@ export async function getClickHistory(
     totalClicks: clickHistory.clicks,
     clickDates: clickDatesCount,
   })
+}
+
+export async function generateSuggestion(
+  request: FastifyRequest,
+  reply: FastifyReply,
+  ShortenedUrlRepository: ShortenedUrlRepository,
+  UserRepository: UserRepository,
+) {
+  const generateFriendlyLinkSchema = z.object({
+    url: z.string().url(),
+    title: z.string().optional(),
+    keywords: z.array(z.string()).optional(),
+  })
+
+  const { url, title, keywords } = generateFriendlyLinkSchema.parse(
+    request.body,
+  )
+
+  const userId = await verifyToken(request, reply)
+
+  if (!userId) {
+    return reply.status(401).send({ error: 'Token não fornecido' })
+  }
+
+  const existingUser = await UserRepository.findById(userId)
+
+  if (!existingUser) {
+    return reply.status(404).send({ error: 'Usuário não encontrado' })
+  }
+
+  if (!url) {
+    return reply.status(400).send({ error: 'Url é obrigatório' })
+  }
+
+  try {
+    const suggestion = await getUniqueSuggestion(
+      title || '',
+      url,
+      keywords || [],
+      ShortenedUrlRepository,
+    )
+
+    reply.status(201).send({
+      suggestion: `${request.protocol}://${request.headers.host}/${suggestion}`,
+    })
+  } catch (error) {
+    console.error(error)
+    return reply.status(500).send({ error: 'Erro ao gerar link customizada' })
+  }
 }
