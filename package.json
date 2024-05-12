@@ -8,12 +8,16 @@
     "start": "node build/server.js",
     "build": "tsup src --out-dir build",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "test:ui": "vitest --ui"
   },
   "devDependencies": {
     "@rocketseat/eslint-config": "^2.2.2",
     "@types/express": "^4.17.21",
     "@types/node": "^20.12.8",
+    "@vitest/coverage-v8": "^1.6.0",
+    "@vitest/ui": "^1.6.0",
     "eslint": "^8.57.0",
     "prisma": "^5.13.0",
     "tsup": "^8.0.2",
@@ -31,6 +35,7 @@
     "@types/bcryptjs": "^2.4.6",
     "@types/jsonwebtoken": "^9.0.6",
     "bcryptjs": "^2.4.3",
+    "dotenv": "^16.4.5",
     "express": "^4.19.2",
     "fastify": "^4.26.2",
     "fastify-decorators": "^3.15.1",
