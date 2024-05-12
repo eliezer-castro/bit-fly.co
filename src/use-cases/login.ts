@@ -1,43 +1,50 @@
 import { UserRepository } from '@/repositories/user-repository'
-import { InvalidPassword } from './errors/invalidPassword'
-import { UserNotExists } from './errors/user-not-exists'
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
+import { InvalidCredentialsErro } from './errors/invalid-credentials-erros'
+import { User } from '@/models/User'
 
-interface LoginUseCaseInterface {
+interface LoginUseCaseRequest {
   email: string
   password: string
+}
+
+interface LoginUseCaseResponse {
+  user: User
+  token: string
 }
 
 export class LoginUseCase {
   // eslint-disable-next-line
   constructor(private userRepository: UserRepository) { }
 
-  async execute({ email, password }: LoginUseCaseInterface) {
-    const existingUser = await this.userRepository.findByEmail(email)
+  async execute({
+    email,
+    password,
+  }: LoginUseCaseRequest): Promise<LoginUseCaseResponse> {
+    const user = await this.userRepository.findByEmail(email)
 
-    if (!existingUser) {
-      throw new UserNotExists()
+    if (!user) {
+      throw new InvalidCredentialsErro()
     }
 
-    const passwordIsValid = bcrypt.compareSync(password, existingUser.password)
+    const doesPasswordMatches = bcrypt.compareSync(password, user.password)
 
-    if (!passwordIsValid) {
-      throw new InvalidPassword()
+    if (!doesPasswordMatches) {
+      throw new InvalidCredentialsErro()
     }
 
     if (!process.env.JWT_SECRET) {
       throw new Error('JWT_SECRET não está definido')
     }
 
-    const token = jwt.sign(
-      { userId: existingUser.id },
-      process.env.JWT_SECRET,
-      {
-        expiresIn: '1h',
-      },
-    )
+    const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, {
+      expiresIn: '1h',
+    })
 
-    return token
+    return {
+      user,
+      token,
+    }
   }
 }
