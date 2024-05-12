@@ -1,6 +1,5 @@
 import { ShortenedUrl } from '@/models/ShortenedUrl'
 import { ShortenedUrlRepository } from '@/repositories/shortened-url-repository'
-import { UserRepository } from '@/repositories/user-repository'
 import { MissingFields } from './errors/missing-fields'
 import { UrlNotExists } from './errors/url-not-exists'
 import { UrlAlreadtExists } from './errors/url-already-exists'
@@ -15,7 +14,6 @@ export interface UpdateShortUrl {
 
 export class UpdateShortUrlCaseUse {
   constructor(
-    private userRepository: UserRepository,
     private shortenedUrlRepository: ShortenedUrlRepository,
     // eslint-disable-next-line prettier/prettier
   ) { }
