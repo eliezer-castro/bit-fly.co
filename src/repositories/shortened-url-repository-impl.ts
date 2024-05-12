@@ -78,19 +78,19 @@ export class ShortenedUrlRepositoryImpl implements ShortenedUrlRepository {
   }
 
   async updateShortenedUrl(
-    shortUrlId: string,
+    urlId: string,
     userId: string,
-    newValueShortenedUrl: string,
-    newValuetitle: string,
-  ): Promise<void> {
-    await this.prisma.shortenedUrl.update({
+    newShortUrl: string,
+    newTitleUrl: string,
+  ): Promise<ShortenedUrl> {
+    return await this.prisma.shortenedUrl.update({
       where: {
-        id: shortUrlId,
+        id: urlId,
         user_id: userId,
       },
       data: {
-        short_url: newValueShortenedUrl,
-        title: newValuetitle,
+        short_url: newShortUrl,
+        title: newTitleUrl,
       },
     })
   }
