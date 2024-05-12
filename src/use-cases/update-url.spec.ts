@@ -2,6 +2,8 @@ import { describe, it, expect, beforeEach } from 'vitest'
 import { UpdateShortUrlCaseUse } from './update-url'
 import { InMemoryShortenedUrlRepository } from '@/repositories/in-memory/in-memory-shortened-url-repository'
 import { AliasAlreadyExists } from './errors/alias-already-exists'
+import { UrlNotExists } from './errors/url-not-exists'
+import { MissingFields } from './errors/missing-fields'
 
 let shortnedUrlRepository: InMemoryShortenedUrlRepository
 let sut: UpdateShortUrlCaseUse
@@ -57,5 +59,25 @@ describe('Update URL Use Case', () => {
         newTitleUrl: 'New Example',
       })
     }).rejects.toThrowError(AliasAlreadyExists)
+  })
+
+  it('should not be able to update a shortened URL that does not exist', async () => {
+    expect(async () => {
+      await sut.execute({
+        urlId: 'shortened-url-id',
+        userId: 'user-id',
+        newShortUrl: 'new-example',
+        newTitleUrl: 'New Example',
+      })
+    }).rejects.toThrowError(UrlNotExists)
+  })
+
+  it('should not be able to update a shortened URL without newShortUrl and newTitleUrl', async () => {
+    expect(async () => {
+      await sut.execute({
+        urlId: 'shortened-url-id',
+        userId: 'user-id',
+      })
+    }).rejects.toThrowError(MissingFields)
   })
 })

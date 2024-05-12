@@ -2,8 +2,8 @@ import { ShortenedUrl } from '@/models/ShortenedUrl'
 import { ShortenedUrlRepository } from '@/repositories/shortened-url-repository'
 import { MissingFields } from './errors/missing-fields'
 import { UrlNotExists } from './errors/url-not-exists'
-import { UrlAlreadtExists } from './errors/url-already-exists'
 import { generateSlugFromUrl } from '@/services/generate-slug'
+import { AliasAlreadyExists } from './errors/alias-already-exists'
 
 export interface UpdateShortUrl {
   urlId: string
@@ -43,7 +43,7 @@ export class UpdateShortUrlCaseUse {
 
       const existingUrl = await this.shortenedUrlRepository.findByShortUrl(slug)
       if (existingUrl) {
-        throw new UrlAlreadtExists()
+        throw new AliasAlreadyExists()
       }
     }
 

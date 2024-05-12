@@ -1,6 +1,10 @@
-export function generateSlugFromUrl(url: string): string {
-  const cleanedUrl = url.trim().replace(/[^a-zA-Z0-9]/g, '')
+export function generateSlugFromUrl(slug: string): string {
+  const trimmedSlug = slug.trim()
+  if (/^[a-zA-Z0-9-]+$/.test(trimmedSlug)) {
+    return trimmedSlug
+  }
+  const cleanedUrl = trimmedSlug.replace(/[^a-zA-Z0-9\s-]/g, '')
   const lowercaseUrl = cleanedUrl.toLowerCase()
-  const slug = lowercaseUrl.replace(/\s+/g, '-')
-  return slug
+  const format = lowercaseUrl.replace(/\s+/g, '-')
+  return format
 }
