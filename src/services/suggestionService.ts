@@ -1,5 +1,5 @@
 import { GoogleGenerativeAI } from '@google/generative-ai'
-import { ShortenedUrlRepository } from '../repositories/ShortenedUrlRepository'
+import { ShortenedUrlRepository } from '../repositories/shortened-url-repository'
 
 export async function generateSuggestionPrompt(
   title: string,
