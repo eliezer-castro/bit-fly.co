@@ -1,17 +1,15 @@
 import { FastifyInstance } from 'fastify'
-import {
-  createShortUrl,
-  deleteShortUrl,
-  getAllUrls,
-  getUrl,
-  redirectToOriginalUrl,
-  clickAnalytics,
-  updateShortUrl,
-  generateSuggestion,
-} from './controllers/urlController'
+import { generateSuggestion } from './controllers/generate-suggestion'
 import { authMiddleware } from './middleware/authMiddleware'
 import { registerUser } from './controllers/register'
 import { authenticate } from './controllers/login'
+import { createUrl } from './controllers/create-url'
+import { updateUrl } from './controllers/update-url'
+import { redirect } from './controllers/redirect'
+import { getAllUrls } from './controllers/get-all-url'
+import { getUrl } from './controllers/get-url'
+import { deleteUrl } from './controllers/delete-url'
+import { clickAnalytics } from './controllers/click-analytics'
 
 export async function appRoutes(app: FastifyInstance) {
   app.post(
@@ -40,14 +38,10 @@ export async function appRoutes(app: FastifyInstance) {
         },
       },
     },
-    createShortUrl,
+    createUrl,
   )
 
-  app.put(
-    '/api/v1/update-url',
-    { preHandler: authMiddleware },
-    async (request, reply) => updateShortUrl(request, reply),
-  )
+  app.put('/api/v1/update-url', { preHandler: authMiddleware }, updateUrl)
 
   app.get(
     '/api/v1/:shortCode',
@@ -71,7 +65,7 @@ export async function appRoutes(app: FastifyInstance) {
         },
       },
     },
-    redirectToOriginalUrl,
+    redirect,
   )
 
   app.get(
@@ -115,7 +109,7 @@ export async function appRoutes(app: FastifyInstance) {
         },
       },
     },
-    async (request, reply) => getAllUrls(request, reply),
+    getAllUrls,
   )
 
   app.get(
@@ -178,7 +172,7 @@ export async function appRoutes(app: FastifyInstance) {
         },
       },
     },
-    deleteShortUrl,
+    deleteUrl,
   )
 
   app.post(
