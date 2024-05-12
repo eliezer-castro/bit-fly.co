@@ -219,6 +219,17 @@ export async function appRoutes(app: FastifyInstance) {
           200: {
             type: 'object',
             properties: {
+              user: {
+                type: 'object',
+                properties: {
+                  id: { type: 'string' },
+                  name: { type: 'string' },
+                  email: { type: 'string' },
+                  password: { type: 'string' }, // Se necessário
+                  created_at: { type: 'string', format: 'date-time' },
+                },
+                required: ['id', 'name', 'email', 'created_at'], // Adicione 'password' se necessário
+              },
               token: { type: 'string' },
             },
           },

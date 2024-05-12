@@ -18,8 +18,8 @@ export async function authenticate(
   try {
     const userRepository = new UserRepositoryImpl()
     const loginUseCase = new LoginUseCase(userRepository)
-    const login = await loginUseCase.execute({ email, password })
-    reply.status(200).send({ token: login })
+    const session = await loginUseCase.execute({ email, password })
+    reply.status(200).send(session)
   } catch (error) {
     if (error instanceof InvalidCredentialsErro) {
       return reply.status(400).send({ message: error.message })
