@@ -1,7 +1,6 @@
 import { GoogleGenerativeAI } from '@google/generative-ai'
-import { ShortenedUrlRepository } from '../repositories/shortened-url-repository'
 
-export async function generateSuggestionPrompt(
+export async function generateSuggestionPrompts(
   title: string,
   url: string,
   keywords: string[],
@@ -12,31 +11,27 @@ export async function generateSuggestionPrompt(
   const gemini = new GoogleGenerativeAI(process.env.GEMINI_API_KEY)
   const modelId = 'gemini-pro'
   const model = gemini.getGenerativeModel({ model: modelId })
-  const prompt = `Crie um slug curto e fácil de lembrar para um link encurtado. O título do link é '${title}' e o link original é '${url}'. As palavras-chave são '${keywords}'.`
+  const prompt = `
+    Título: ${title}
+    url: ${url}
+    Palavras-chave: ${keywords.join(', ')}
+    ---
+    com base nessas informações, gere um 'slug' a partir do título, url e palavras-chave fornecidos, o slug deve ser curto, descritiva e amigável para o usuário.
+
+    Exemplo de Entrada:
+
+    Título: "Receita de bolo de chocolate"
+    Descrição: "Aprenda a fazer um delicioso bolo de chocolate em casa"
+    Palavras-chave: "bolo, chocolate, receita, culinária, sobremesa"
+
+    Exemplo de saída: "receita-bolo-chocolate"
+
+    `
 
   const result = await model.generateContent(prompt)
   const response = await result.response
   const suggestion = response.text()
+  console.log(suggestion)
 
   return suggestion
-}
-
-export async function getUniqueSuggestion(
-  title: string,
-  url: string,
-  keywords: string[],
-  ShortenedUrlRepository: ShortenedUrlRepository,
-): Promise<string> {
-  const generatedSuggestions = new Set<string>()
-
-  while (true) {
-    const suggestion = await generateSuggestionPrompt(title, url, keywords)
-    if (
-      !generatedSuggestions.has(suggestion) &&
-      !(await ShortenedUrlRepository.findByShortUrl(suggestion))
-    ) {
-      return suggestion
-    }
-    generatedSuggestions.add(suggestion)
-  }
 }
