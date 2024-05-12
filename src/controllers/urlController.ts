@@ -1,18 +1,27 @@
 import { FastifyRequest, FastifyReply } from 'fastify'
 import { z } from 'zod'
-import { nanoid } from 'nanoid'
-import { verifyToken } from '../services/authUtils'
-import { generateUniqueShortenedURL } from '../services/generateUniqueShortenedURL'
-import { UserRepository } from '../repositories/user-repository'
-import { ShortenedUrlRepository } from '../repositories/shortened-url-repository'
-import { ShortenedUrl } from '../models/ShortenedUrl'
-import { getUniqueSuggestion } from '../services/suggestionService'
+import { verifyUserToken } from '../services/authUtils'
+import { UserRepositoryImpl } from '@/repositories/user-repository-impl'
+import { ShortenedUrlRepositoryImpl } from '@/repositories/shortened-url-repository-impl'
+import { CreateShortUrlUseCase } from '@/use-cases/create-short-url'
+import { AliasAlreadyExists } from '@/use-cases/errors/alias-already-exists'
+import { UpdateShortUrlCaseUse } from '@/use-cases/update-short-Url'
+import { UrlNotExists } from '@/use-cases/errors/url-not-exists'
+import { MissingFields } from '@/use-cases/errors/missing-fields'
+import { UrlAlreadtExists } from '@/use-cases/errors/url-already-exists'
+import { RedirectCaseUse } from '@/use-cases/redirect'
+import { InvalidUrl } from '@/use-cases/errors/invalid-url'
+import { GetAllUrlsUseCase } from '@/use-cases/get-all-urls'
+import { GetUrlUseCase } from '@/use-cases/get-url'
+import { DeleteUrlUseCase } from '@/use-cases/delete-url'
+import { UserNotExists } from '@/use-cases/errors/user-not-exists'
+import { ClickAnalyticsUseCase } from '@/use-cases/click-analytics'
+import { Unauthorized } from '@/use-cases/errors/unauthorized'
+import { GenerateSuggestion } from '@/use-cases/generate-suggestion'
 
 export async function createShortUrl(
   request: FastifyRequest,
   reply: FastifyReply,
-  ShortenedUrlRepository: ShortenedUrlRepository,
-  UserRepository: UserRepository,
 ) {
   const urlSchema = z.object({
     url: z.string().url(),
@@ -20,109 +29,96 @@ export async function createShortUrl(
     alias: z.string().optional(),
   })
 
-  const { url, title, alias } = urlSchema.parse(request.body)
+  try {
+    const { url, title, alias } = urlSchema.parse(request.body)
 
-  const userId = await verifyToken(request, reply)
+    const token = request.headers.authorization?.replace('Bearer ', '') || ''
 
-  if (!userId) {
-    return reply.status(401).send({ error: 'Token não fornecido' })
-  }
+    const jwtSecret = process.env.JWT_SECRET || ''
 
-  if (!url) {
-    return reply.status(400).send({ error: 'Url e userId são obrigatórios' })
-  }
+    const user = await verifyUserToken({ token, jwtSecret })
 
-  const existingUser = await UserRepository.findById(userId)
+    const userRepository = new UserRepositoryImpl()
+    const shortenedUrlRepository = new ShortenedUrlRepositoryImpl()
+    const registerUseCase = new CreateShortUrlUseCase(
+      userRepository,
+      shortenedUrlRepository,
+    )
 
-  if (!existingUser) {
-    return reply.status(404).send({ error: 'Usuário não encontrado' })
-  }
-  if (alias) {
-    const existingShortenedUrl =
-      await ShortenedUrlRepository.findByShortUrl(alias)
-    if (existingShortenedUrl) {
-      return reply.status(400).send({ error: 'Alias já existe' })
+    const data = await registerUseCase.execute({
+      url,
+      title,
+      alias,
+      userId: user.userId,
+    })
+
+    console.log(data)
+    reply.status(201).send({
+      shortUrl: `${request.protocol}://${request.headers.host}/${data.short_url}`,
+    })
+  } catch (error) {
+    if (error instanceof AliasAlreadyExists) {
+      return reply.status(409).send({ message: error.message })
     }
+    throw error
   }
-
-  const hash = alias || (await generateUniqueShortenedURL())
-
-  const newShortUrl: ShortenedUrl = {
-    id: nanoid(),
-    long_url: url,
-    title: title || '',
-    short_url: hash,
-    user_id: userId,
-  }
-
-  await ShortenedUrlRepository.createShortenedUrl(newShortUrl)
-
-  reply.status(201).send({
-    shortUrl: `${request.protocol}://${request.headers.host}/${hash}`,
-  })
 }
 
 export async function updateShortUrl(
   request: FastifyRequest,
   reply: FastifyReply,
-  shortenedUrlRepository: ShortenedUrlRepository,
-  userRepository: UserRepository,
 ) {
   const updateUrlSchema = z.object({
-    shortUrlId: z.string(),
-    newValueShortenedUrl: z.string().optional(),
-    newValuetitle: z.string().optional(),
+    UrlId: z.string(),
+    newShortUrl: z.string().optional(),
+    newTitleUrl: z.string().optional(),
   })
 
-  const { shortUrlId, newValueShortenedUrl, newValuetitle } =
-    updateUrlSchema.parse(request.body)
-
-  const userId = await verifyToken(request, reply)
-  if (!userId) {
-    return reply.status(401).send({ error: 'Token não fornecido' })
-  }
-
-  const existingUser = await userRepository.findById(userId)
-  if (!existingUser) {
-    return reply.status(404).send({ error: 'Usuário não encontrado' })
-  }
-
-  const existingShortenedUrl =
-    await shortenedUrlRepository.findByShortId(shortUrlId)
-  if (!existingShortenedUrl) {
-    return reply.status(404).send({ error: 'URL não encontrada' })
-  }
-
-  if (!newValueShortenedUrl && !newValuetitle) {
-    return reply.status(400).send({ error: 'Informe ao menos um valor' })
-  }
-
-  const newShortenedUrl = newValueShortenedUrl || existingShortenedUrl.short_url
-  const newTitle = newValuetitle || existingShortenedUrl.title
-
-  const existingNewValueShortenedUrl =
-    await shortenedUrlRepository.findByShortUrl(newShortenedUrl)
-  if (
-    existingNewValueShortenedUrl &&
-    existingNewValueShortenedUrl.id !== existingShortenedUrl.id
-  ) {
-    return reply.status(400).send({ error: 'URL já existe' })
-  }
-
-  await shortenedUrlRepository.updateShortenedUrl(
-    existingShortenedUrl.id,
-    userId,
-    newShortenedUrl,
-    newTitle,
+  const { UrlId, newShortUrl, newTitleUrl } = updateUrlSchema.parse(
+    request.body,
   )
 
-  reply.send({ message: 'URL atualizada com sucesso' })
+  const token = request.headers.authorization?.replace('Bearer ', '') || ''
+
+  const jwtSecret = process.env.JWT_SECRET || ''
+
+  const user = await verifyUserToken({ token, jwtSecret })
+
+  try {
+    const userRepository = new UserRepositoryImpl()
+    const shortenedUrlRepository = new ShortenedUrlRepositoryImpl()
+    const registerUseCase = new UpdateShortUrlCaseUse(
+      userRepository,
+      shortenedUrlRepository,
+    )
+
+    await registerUseCase.execute({
+      urlId: UrlId,
+      userId: user.userId,
+      newShortUrl,
+      newTitleUrl,
+    })
+
+    reply.send({ message: 'URL atualizada com sucesso' })
+  } catch (error) {
+    if (error instanceof MissingFields) {
+      return reply.status(400).send({ message: error.message })
+    }
+
+    if (error instanceof UrlNotExists) {
+      return reply.status(404).send({ message: error.message })
+    }
+
+    if (error instanceof UrlAlreadtExists) {
+      return reply.status(409).send({ message: error.message })
+    }
+    throw error
+  }
 }
 
 export async function redirectToOriginalUrl(
   request: FastifyRequest,
   reply: FastifyReply,
-  ShortenedUrlRepository: ShortenedUrlRepository,
 ) {
   const redirectSchema = z.object({
     shortCode: z.string(),
@@ -130,30 +126,26 @@ export async function redirectToOriginalUrl(
 
   const { shortCode } = redirectSchema.parse(request.params)
 
-  if (!shortCode) {
-    return reply.status(400).send({ error: 'URL inválida' })
+  try {
+    const shortenedUrlRepository = new ShortenedUrlRepositoryImpl()
+    const redirectCaseUse = new RedirectCaseUse(shortenedUrlRepository)
+
+    const originalUrl = await redirectCaseUse.execute(shortCode)
+
+    reply.redirect(originalUrl)
+  } catch (error) {
+    if (error instanceof InvalidUrl) {
+      return reply.status(400).send({ message: error.message })
+    }
+
+    if (error instanceof UrlNotExists) {
+      return reply.status(404).send({ message: error.message })
+    }
+    throw error
   }
-
-  const existingShortenedUrl =
-    await ShortenedUrlRepository.findByShortUrl(shortCode)
-
-  if (!existingShortenedUrl) {
-    return reply.status(404).send({ error: 'URL não encontrada' })
-  }
-
-  await ShortenedUrlRepository.incrementClicksAndUpdateDate(shortCode)
-
-  const longUrl = existingShortenedUrl.long_url
-
-  reply.redirect(longUrl)
 }
 
-export async function getAllShortUrls(
-  request: FastifyRequest,
-  reply: FastifyReply,
-  ShortenedUrlRepository: ShortenedUrlRepository,
-  UserRepository: UserRepository,
-) {
+export async function getAllUrls(request: FastifyRequest, reply: FastifyReply) {
   const filter = z.object({
     limit: z.number().optional(),
     orderBy: z.enum(['clicks', 'created_at', 'updated_at']).optional(),
@@ -166,19 +158,17 @@ export async function getAllShortUrls(
     request.query,
   )
 
-  const userId = await verifyToken(request, reply)
+  const token = request.headers.authorization?.replace('Bearer ', '') || ''
 
-  if (!userId) {
-    return reply.status(401).send({ error: 'Token não fornecido' })
-  }
+  const jwtSecret = process.env.JWT_SECRET || ''
 
-  const existingUser = await UserRepository.findById(userId)
+  const user = await verifyUserToken({ token, jwtSecret })
 
-  if (!existingUser) {
-    return reply.status(404).send({ error: 'Usuário não encontrado' })
-  }
+  const shortenedUrlRepository = new ShortenedUrlRepositoryImpl()
 
-  const urls = await ShortenedUrlRepository.findAllByUserId(userId, {
+  const getAllUrlsUseCase = new GetAllUrlsUseCase(shortenedUrlRepository)
+
+  const urls = await getAllUrlsUseCase.execute(user.userId, {
     limit,
     orderBy,
     orderDir,
@@ -189,119 +179,115 @@ export async function getAllShortUrls(
   reply.send(urls)
 }
 
-export async function getShortUrlDetails(
-  request: FastifyRequest,
-  reply: FastifyReply,
-  ShortenedUrlRepository: ShortenedUrlRepository,
-  UserRepository: UserRepository,
-) {
+export async function getUrl(request: FastifyRequest, reply: FastifyReply) {
   const getUrlSchema = z.object({
     shortCode: z.string(),
   })
 
   const { shortCode } = getUrlSchema.parse(request.params)
 
-  const userId = await verifyToken(request, reply)
+  const token = request.headers.authorization?.replace('Bearer ', '') || ''
 
-  if (!userId) {
-    return reply.status(401).send({ error: 'Token não fornecido' })
+  const jwtSecret = process.env.JWT_SECRET || ''
+
+  const user = await verifyUserToken({ token, jwtSecret })
+
+  try {
+    const shortenedUrlRepository = new ShortenedUrlRepositoryImpl()
+
+    const getUrlUseCase = new GetUrlUseCase(shortenedUrlRepository)
+
+    const url = await getUrlUseCase.execute(user.userId, shortCode)
+
+    reply.send(url)
+  } catch (error) {
+    if (error instanceof UrlNotExists) {
+      return reply.status(404).send({ message: error.message })
+    }
+    throw error
   }
-
-  if (!shortCode) {
-    return reply.status(400).send({ error: 'id e userId são obrigatórios' })
-  }
-  const existingUser = await UserRepository.findById(userId)
-
-  if (!existingUser) {
-    return reply.status(404).send({ error: 'Usuário não encontrado' })
-  }
-
-  const existingShortenedUrl =
-    await ShortenedUrlRepository.findByShortUrl(shortCode)
-
-  if (!existingShortenedUrl) {
-    return reply.status(404).send({ error: 'URL não encontrada' })
-  }
-
-  reply.send(existingShortenedUrl)
 }
 
 export async function deleteShortUrl(
   request: FastifyRequest,
   reply: FastifyReply,
-  ShortenedUrlRepository: ShortenedUrlRepository,
-  UserRepository: UserRepository,
 ) {
   const deleteUrlSchema = z.object({
     shortUrl: z.string(),
   })
 
   const { shortUrl } = deleteUrlSchema.parse(request.query)
-  const userId = await verifyToken(request, reply)
 
-  if (!userId) {
-    return reply.status(401).send({ error: 'Token não fornecido' })
+  const token = request.headers.authorization?.replace('Bearer ', '') || ''
+
+  const jwtSecret = process.env.JWT_SECRET || ''
+
+  const user = await verifyUserToken({ token, jwtSecret })
+
+  try {
+    const shortenedUrlRepository = new ShortenedUrlRepositoryImpl()
+    const userRepository = new UserRepositoryImpl()
+    const deleteUrlUseCase = new DeleteUrlUseCase(
+      shortenedUrlRepository,
+      userRepository,
+    )
+
+    await deleteUrlUseCase.execute(user.userId, shortUrl)
+
+    reply.send({ message: 'URL deletada com sucesso' })
+  } catch (error) {
+    if (error instanceof UrlNotExists) {
+      return reply.status(404).send({ message: error.message })
+    }
+    if (error instanceof UserNotExists) {
+      return reply.status(404).send({ message: error.message })
+    }
+    throw error
   }
-
-  if (!shortUrl) {
-    return reply.status(400).send({ error: 'shortUrl é obrigatório' })
-  }
-
-  const existingUser = await UserRepository.findById(userId)
-
-  if (!existingUser) {
-    return reply.status(404).send({ error: 'Usuário não encontrado' })
-  }
-
-  const existingShortenedUrl =
-    await ShortenedUrlRepository.findByShortUrl(shortUrl)
-
-  if (!existingShortenedUrl) {
-    return reply.status(404).send({ error: 'URL não encontrada' })
-  }
-
-  await ShortenedUrlRepository.deleteShortenedUrl(shortUrl, userId)
-  reply.send({ message: 'URL deletada com sucesso' })
 }
 
-export async function getClickHistory(
+export async function clickAnalytics(
   request: FastifyRequest,
   reply: FastifyReply,
-  ShortenedUrlRepository: ShortenedUrlRepository,
 ) {
   const shortCodeSchema = z.object({
     shortCode: z.string(),
   })
   const { shortCode } = shortCodeSchema.parse(request.params)
 
-  if (!shortCode) {
-    return reply.status(401).send({ error: 'shortCode não fornecido' })
+  try {
+    const token = request.headers.authorization?.replace('Bearer ', '') || ''
+
+    const jwtSecret = process.env.JWT_SECRET || ''
+
+    const user = await verifyUserToken({ token, jwtSecret })
+
+    const shortenedUrlRepository = new ShortenedUrlRepositoryImpl()
+    const clickAnalyticsUseCase = new ClickAnalyticsUseCase(
+      shortenedUrlRepository,
+    )
+
+    const analytics = await clickAnalyticsUseCase.execute(
+      user.userId,
+      shortCode,
+    )
+
+    reply.send(analytics)
+  } catch (error) {
+    if (error instanceof UrlNotExists) {
+      return reply.status(404).send({ message: error.message })
+    }
+
+    if (error instanceof Unauthorized) {
+      return reply.status(401).send({ message: error.message })
+    }
+    throw error
   }
-
-  const clickHistory = await ShortenedUrlRepository.findByShortUrl(shortCode)
-
-  if (!clickHistory) {
-    return reply.status(404).send({ error: 'URL não encontrada' })
-  }
-
-  const clickDatesCount: Record<string, number> = {}
-
-  clickHistory.clickDates?.forEach((date) => {
-    const dateString = date.toISOString().split('T')[0]
-    clickDatesCount[dateString] = (clickDatesCount[dateString] || 0) + 1
-  })
-
-  reply.send({
-    totalClicks: clickHistory.clicks,
-    clickDates: clickDatesCount,
-  })
 }
 
 export async function generateSuggestion(
   request: FastifyRequest,
   reply: FastifyReply,
-  ShortenedUrlRepository: ShortenedUrlRepository,
-  UserRepository: UserRepository,
 ) {
   const generateFriendlyLinkSchema = z.object({
     url: z.string().url(),
@@ -313,35 +299,31 @@ export async function generateSuggestion(
     request.body,
   )
 
-  const userId = await verifyToken(request, reply)
+  const token = request.headers.authorization?.replace('Bearer ', '') || ''
 
-  if (!userId) {
-    return reply.status(401).send({ error: 'Token não fornecido' })
-  }
+  const jwtSecret = process.env.JWT_SECRET || ''
 
-  const existingUser = await UserRepository.findById(userId)
-
-  if (!existingUser) {
-    return reply.status(404).send({ error: 'Usuário não encontrado' })
-  }
-
-  if (!url) {
-    return reply.status(400).send({ error: 'Url é obrigatório' })
-  }
+  const user = await verifyUserToken({ token, jwtSecret })
 
   try {
-    const suggestion = await getUniqueSuggestion(
+    const shortenedUrlRepository = new ShortenedUrlRepositoryImpl()
+    const userRepository = new UserRepositoryImpl()
+    const generateSuggestion = new GenerateSuggestion(
+      shortenedUrlRepository,
+      userRepository,
+    )
+
+    const suggestion = await generateSuggestion.execute(
+      user.userId,
       title || '',
       url,
       keywords || [],
-      ShortenedUrlRepository,
     )
 
     reply.status(201).send({
       suggestion: `${request.protocol}://${request.headers.host}/${suggestion}`,
     })
   } catch (error) {
-    console.error(error)
-    return reply.status(500).send({ error: 'Erro ao gerar link customizada' })
+    return reply.status(500).send(error)
   }
 }
