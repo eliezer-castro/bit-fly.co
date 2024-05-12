@@ -99,4 +99,13 @@ export class ShortenedUrlRepositoryImpl implements ShortenedUrlRepository {
   constructor() {
     this.prisma = new PrismaClient()
   }
+
+  findUrlByUserId(
+    userId: string,
+    shortUrl: string,
+  ): Promise<ShortenedUrl | null> {
+    return this.prisma.shortenedUrl.findFirst({
+      where: { user_id: userId, short_url: shortUrl },
+    })
+  }
 }

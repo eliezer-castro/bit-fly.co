@@ -2,6 +2,10 @@ import { ShortenedUrl } from '../models/ShortenedUrl'
 
 export interface ShortenedUrlRepository {
   findByShortUrl(shortUrl: string): Promise<ShortenedUrl | null>
+  findUrlByUserId(
+    userId: string,
+    shortUrl: string,
+  ): Promise<ShortenedUrl | null>
   findAllByUserId(
     userId: string,
     filters: {
