@@ -5,10 +5,10 @@ import { compare } from 'bcryptjs'
 import { InMemoryUserRepository } from '@/repositories/in-memory/in-memory-user-repository'
 import { UserAlreadyExists } from './errors/user-already-exists'
 
-describe('Register Use Case', () => {
-  let userRepository: InMemoryUserRepository
-  let sut: RegisterUseCase
+let userRepository: InMemoryUserRepository
+let sut: RegisterUseCase
 
+describe('Register Use Case', () => {
   beforeEach(() => {
     userRepository = new InMemoryUserRepository()
     sut = new RegisterUseCase(userRepository)
