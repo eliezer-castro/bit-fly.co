@@ -10,11 +10,19 @@ interface RegisterUseCaseInterface {
   password: string
 }
 
+interface RegisterUseCaseResponse {
+  user: User
+}
+
 export class RegisterUseCase {
   // eslint-disable-next-line
   constructor(private userRepository: UserRepository) { }
 
-  async execute({ name, email, password }: RegisterUseCaseInterface) {
+  async execute({
+    name,
+    email,
+    password,
+  }: RegisterUseCaseInterface): Promise<RegisterUseCaseResponse> {
     const existingUser = await this.userRepository.findByEmail(email)
 
     if (existingUser) {
@@ -29,6 +37,8 @@ export class RegisterUseCase {
       created_at: new Date(),
     }
 
-    await this.userRepository.createUser(newUser)
+    const user = await this.userRepository.createUser(newUser)
+
+    return { user }
   }
 }
