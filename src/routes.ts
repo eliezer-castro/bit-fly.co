@@ -9,8 +9,9 @@ import {
   updateShortUrl,
   generateSuggestion,
 } from './controllers/urlController'
-import { loginUser, registerUser } from './controllers/authController'
 import { authenticate } from './middleware/authMiddleware'
+import { registerUser } from './controllers/register'
+import { loginUser } from './controllers/login'
 
 export async function appRoutes(app: FastifyInstance) {
   app.post(
