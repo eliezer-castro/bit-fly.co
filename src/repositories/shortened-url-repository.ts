@@ -17,9 +17,9 @@ export interface ShortenedUrlRepository {
   incrementClicksAndUpdateDate(shortCode: string): Promise<void>
   deleteShortenedUrl(shortCode: string, userId: string): Promise<void>
   updateShortenedUrl(
-    shortUrlId: string,
+    urlId: string,
     userId: string,
-    newValueShortenedUrl: string,
-    newValuetitle: string,
-  ): Promise<void>
+    newShortUrl: string,
+    newTitleUrl: string,
+  ): Promise<ShortenedUrl>
 }
