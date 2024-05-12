@@ -1,17 +1,23 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { expect, describe, it } from 'vitest'
+import { expect, describe, it, beforeEach } from 'vitest'
 import bcrypt from 'bcryptjs'
 import { InMemoryUserRepository } from '@/repositories/in-memory/in-memory-user-repository'
 import { LoginUseCase } from './login'
 import dotenv from 'dotenv'
 import { InvalidCredentialsErro } from './errors/invalid-credentials-erros'
+
 dotenv.config()
 
-describe('Login Use Case', () => {
-  it('should be able to login', async () => {
-    const userRepository = new InMemoryUserRepository()
-    const sut = new LoginUseCase(userRepository)
+let userRepository: InMemoryUserRepository
+let sut: LoginUseCase
 
+describe('Login Use Case', () => {
+  beforeEach(() => {
+    userRepository = new InMemoryUserRepository()
+    sut = new LoginUseCase(userRepository)
+  })
+
+  it('should be able to login', async () => {
     await userRepository.createUser({
       id: '1',
       name: 'Guilherme Dalastra',
@@ -29,9 +35,6 @@ describe('Login Use Case', () => {
   })
 
   it('should not be able to login with invalid credentials', async () => {
-    const userRepository = new InMemoryUserRepository()
-    const sut = new LoginUseCase(userRepository)
-
     await userRepository.createUser({
       id: '1',
       name: 'Guilherme Dalastra',

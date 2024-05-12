@@ -41,6 +41,7 @@ export class LoginUseCase {
     const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, {
       expiresIn: '1h',
     })
+    console.log({ user, token })
 
     return {
       user,
