@@ -11,7 +11,6 @@ export async function authMiddleware(
     const jwtSecret = process.env.JWT_SECRET || ''
 
     const user = await verifyUserToken({ token, jwtSecret })
-    console.log(user.userId)
 
     request.headers.user = user.userId
   } catch (error) {

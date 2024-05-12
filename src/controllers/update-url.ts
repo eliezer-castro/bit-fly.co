@@ -1,10 +1,9 @@
 import { ShortenedUrlRepositoryImpl } from '@/repositories/shortened-url-repository-impl'
-import { UserRepositoryImpl } from '@/repositories/user-repository-impl'
 import { verifyUserToken } from '@/services/authUtils'
 import { MissingFields } from '@/use-cases/errors/missing-fields'
 import { UrlAlreadtExists } from '@/use-cases/errors/url-already-exists'
 import { UrlNotExists } from '@/use-cases/errors/url-not-exists'
-import { UpdateShortUrlCaseUse } from '@/use-cases/update-short-Url'
+import { UpdateShortUrlCaseUse } from '@/use-cases/update-url'
 import { FastifyReply, FastifyRequest } from 'fastify'
 import { z } from 'zod'
 
@@ -26,12 +25,8 @@ export async function updateUrl(request: FastifyRequest, reply: FastifyReply) {
   const user = await verifyUserToken({ token, jwtSecret })
 
   try {
-    const userRepository = new UserRepositoryImpl()
     const shortenedUrlRepository = new ShortenedUrlRepositoryImpl()
-    const registerUseCase = new UpdateShortUrlCaseUse(
-      userRepository,
-      shortenedUrlRepository,
-    )
+    const registerUseCase = new UpdateShortUrlCaseUse(shortenedUrlRepository)
 
     await registerUseCase.execute({
       urlId: UrlId,

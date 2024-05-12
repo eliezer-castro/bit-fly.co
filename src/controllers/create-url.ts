@@ -1,7 +1,7 @@
 import { ShortenedUrlRepositoryImpl } from '@/repositories/shortened-url-repository-impl'
 import { UserRepositoryImpl } from '@/repositories/user-repository-impl'
 import { verifyUserToken } from '@/services/authUtils'
-import { CreateShortUrlUseCase } from '@/use-cases/create-short-url'
+import { CreateShortUrlUseCase } from '@/use-cases/create-url'
 import { AliasAlreadyExists } from '@/use-cases/errors/alias-already-exists'
 import { FastifyReply, FastifyRequest } from 'fastify'
 import { z } from 'zod'
@@ -35,8 +35,6 @@ export async function createUrl(request: FastifyRequest, reply: FastifyReply) {
       alias,
       userId: user.userId,
     })
-
-    console.log(data)
     reply.status(201).send({
       shortUrl: `${request.protocol}://${request.headers.host}/${data.short_url}`,
     })
