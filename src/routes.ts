@@ -2,24 +2,17 @@ import { FastifyInstance } from 'fastify'
 import {
   createShortUrl,
   deleteShortUrl,
-  getAllShortUrls,
-  getShortUrlDetails,
+  getAllUrls,
+  getUrl,
   redirectToOriginalUrl,
-  getClickHistory,
+  clickAnalytics,
   updateShortUrl,
   generateSuggestion,
 } from './controllers/urlController'
 import { loginUser, registerUser } from './controllers/authController'
 import { authenticate } from './middleware/authMiddleware'
-import { UserRepository } from './repositories/user-repository'
-import { UserRepositoryImpl } from './repositories/user-repository-impl'
-import { ShortenedUrlRepository } from './repositories/shortened-url-repository'
-import { ShortenedUrlRepositoryImpl } from './repositories/shortened-url-repository-impl'
 
 export async function appRoutes(app: FastifyInstance) {
-  const userRepository: UserRepository = new UserRepositoryImpl()
-  const ShortenedUrlRepository: ShortenedUrlRepository =
-    new ShortenedUrlRepositoryImpl()
   app.post(
     '/api/v1/shorten-url',
     {
@@ -29,7 +22,7 @@ export async function appRoutes(app: FastifyInstance) {
         body: {
           type: 'object',
           properties: {
-            url: { type: 'string', format: 'uri' },
+            url: { type: 'string' },
             title: { type: 'string' },
             alias: { type: 'string' },
           },
@@ -46,15 +39,13 @@ export async function appRoutes(app: FastifyInstance) {
         },
       },
     },
-    async (request, reply) =>
-      createShortUrl(request, reply, ShortenedUrlRepository, userRepository),
+    async (request, reply) => createShortUrl(request, reply),
   )
 
   app.put(
     '/api/v1/update-url',
     { preHandler: authenticate },
-    async (request, reply) =>
-      updateShortUrl(request, reply, ShortenedUrlRepository, userRepository),
+    async (request, reply) => updateShortUrl(request, reply),
   )
 
   app.get(
@@ -79,8 +70,7 @@ export async function appRoutes(app: FastifyInstance) {
         },
       },
     },
-    async (request, reply) =>
-      redirectToOriginalUrl(request, reply, ShortenedUrlRepository),
+    async (request, reply) => redirectToOriginalUrl(request, reply),
   )
 
   app.get(
@@ -124,8 +114,7 @@ export async function appRoutes(app: FastifyInstance) {
         },
       },
     },
-    async (request, reply) =>
-      getAllShortUrls(request, reply, ShortenedUrlRepository, userRepository),
+    async (request, reply) => getAllUrls(request, reply),
   )
 
   app.get(
@@ -160,13 +149,7 @@ export async function appRoutes(app: FastifyInstance) {
         },
       },
     },
-    async (request, reply) =>
-      getShortUrlDetails(
-        request,
-        reply,
-        ShortenedUrlRepository,
-        userRepository,
-      ),
+    async (request, reply) => getUrl(request, reply),
   )
 
   app.delete(
@@ -194,8 +177,7 @@ export async function appRoutes(app: FastifyInstance) {
         },
       },
     },
-    async (request, reply) =>
-      deleteShortUrl(request, reply, ShortenedUrlRepository, userRepository),
+    async (request, reply) => deleteShortUrl(request, reply),
   )
 
   app.post(
@@ -252,7 +234,7 @@ export async function appRoutes(app: FastifyInstance) {
   )
 
   app.get(
-    '/api/v1/shortCode/:shortCode/clickHistory',
+    '/api/v1/shortCode/:shortCode/clickAnalytics',
     {
       preHandler: authenticate,
       schema: {
@@ -280,19 +262,12 @@ export async function appRoutes(app: FastifyInstance) {
         },
       },
     },
-    async (request, reply) =>
-      getClickHistory(request, reply, ShortenedUrlRepository),
+    async (request, reply) => clickAnalytics(request, reply),
   )
 
   app.post(
     '/api/v1/generate-suggestion',
     { preHandler: authenticate },
-    async (request, reply) =>
-      generateSuggestion(
-        request,
-        reply,
-        ShortenedUrlRepository,
-        userRepository,
-      ),
+    async (request, reply) => generateSuggestion(request, reply),
   )
 }
