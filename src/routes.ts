@@ -40,7 +40,7 @@ export async function appRoutes(app: FastifyInstance) {
         },
       },
     },
-    async (request, reply) => createShortUrl(request, reply),
+    createShortUrl,
   )
 
   app.put(
@@ -71,7 +71,7 @@ export async function appRoutes(app: FastifyInstance) {
         },
       },
     },
-    async (request, reply) => redirectToOriginalUrl(request, reply),
+    redirectToOriginalUrl,
   )
 
   app.get(
@@ -150,7 +150,7 @@ export async function appRoutes(app: FastifyInstance) {
         },
       },
     },
-    async (request, reply) => getUrl(request, reply),
+    getUrl,
   )
 
   app.delete(
@@ -178,7 +178,7 @@ export async function appRoutes(app: FastifyInstance) {
         },
       },
     },
-    async (request, reply) => deleteShortUrl(request, reply),
+    deleteShortUrl,
   )
 
   app.post(
@@ -263,12 +263,12 @@ export async function appRoutes(app: FastifyInstance) {
         },
       },
     },
-    async (request, reply) => clickAnalytics(request, reply),
+    clickAnalytics,
   )
 
   app.post(
     '/api/v1/generate-suggestion',
     { preHandler: authMiddleware },
-    async (request, reply) => generateSuggestion(request, reply),
+    generateSuggestion,
   )
 }
