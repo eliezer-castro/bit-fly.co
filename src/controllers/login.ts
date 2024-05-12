@@ -4,7 +4,10 @@ import { LoginUseCase } from '@/use-cases/login'
 import { FastifyReply, FastifyRequest } from 'fastify'
 import { z } from 'zod'
 
-export async function loginUser(request: FastifyRequest, reply: FastifyReply) {
+export async function authenticate(
+  request: FastifyRequest,
+  reply: FastifyReply,
+) {
   const loginSchema = z.object({
     email: z.string().email(),
     password: z.string().min(6),
@@ -19,10 +22,7 @@ export async function loginUser(request: FastifyRequest, reply: FastifyReply) {
     reply.status(200).send({ token: login })
   } catch (error) {
     if (error instanceof InvalidCredentialsErro) {
-      return reply.status(404).send({ message: error.message })
-    }
-    if (error instanceof InvalidCredentialsErro) {
-      return reply.status(401).send({ message: error.message })
+      return reply.status(400).send({ message: error.message })
     }
     throw error
   }

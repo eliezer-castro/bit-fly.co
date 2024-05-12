@@ -1,7 +1,7 @@
 import { verifyUserToken } from '@/services/authUtils'
 import { FastifyRequest, FastifyReply } from 'fastify'
 
-export async function authenticate(
+export async function authMiddleware(
   request: FastifyRequest,
   reply: FastifyReply,
 ) {

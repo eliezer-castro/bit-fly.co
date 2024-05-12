@@ -9,15 +9,15 @@ import {
   updateShortUrl,
   generateSuggestion,
 } from './controllers/urlController'
-import { authenticate } from './middleware/authMiddleware'
+import { authMiddleware } from './middleware/authMiddleware'
 import { registerUser } from './controllers/register'
-import { loginUser } from './controllers/login'
+import { authenticate } from './controllers/login'
 
 export async function appRoutes(app: FastifyInstance) {
   app.post(
     '/api/v1/shorten-url',
     {
-      preHandler: authenticate,
+      preHandler: authMiddleware,
       schema: {
         tags: ['Shorten URL'],
         body: {
@@ -45,7 +45,7 @@ export async function appRoutes(app: FastifyInstance) {
 
   app.put(
     '/api/v1/update-url',
-    { preHandler: authenticate },
+    { preHandler: authMiddleware },
     async (request, reply) => updateShortUrl(request, reply),
   )
 
@@ -77,7 +77,7 @@ export async function appRoutes(app: FastifyInstance) {
   app.get(
     '/api/v1/user/urls',
     {
-      preHandler: authenticate,
+      preHandler: authMiddleware,
 
       schema: {
         tags: ['Shorten URL'],
@@ -121,7 +121,7 @@ export async function appRoutes(app: FastifyInstance) {
   app.get(
     '/api/v1/details/:shortCode',
     {
-      preHandler: authenticate,
+      preHandler: authMiddleware,
 
       schema: {
         tags: ['Shorten URL'],
@@ -156,7 +156,7 @@ export async function appRoutes(app: FastifyInstance) {
   app.delete(
     '/api/v1/delete-url',
     {
-      preHandler: authenticate,
+      preHandler: authMiddleware,
 
       schema: {
         tags: ['Shorten URL'],
@@ -205,11 +205,11 @@ export async function appRoutes(app: FastifyInstance) {
         },
       },
     },
-    async (request, reply) => registerUser(request, reply),
+    registerUser,
   )
 
   app.post(
-    '/api/v1/login',
+    '/api/v1/sessions',
     {
       schema: {
         tags: ['Authentication'],
@@ -231,7 +231,7 @@ export async function appRoutes(app: FastifyInstance) {
         },
       },
     },
-    async (request, reply) => loginUser(request, reply),
+    authenticate,
   )
 
   app.get(
@@ -268,7 +268,7 @@ export async function appRoutes(app: FastifyInstance) {
 
   app.post(
     '/api/v1/generate-suggestion',
-    { preHandler: authenticate },
+    { preHandler: authMiddleware },
     async (request, reply) => generateSuggestion(request, reply),
   )
 }
