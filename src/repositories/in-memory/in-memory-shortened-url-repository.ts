@@ -58,11 +58,11 @@ export class InMemoryShortenedUrlRepository implements ShortenedUrlRepository {
 
   async findUrlByUserId(
     userId: string,
-    shortUrl: string,
+    shortCode: string,
   ): Promise<ShortenedUrl | null> {
     return (
       this.urls.find(
-        (url) => url.user_id === userId && url.short_url === shortUrl,
+        (url) => url.user_id === userId && url.short_url === shortCode,
       ) || null
     )
   }
