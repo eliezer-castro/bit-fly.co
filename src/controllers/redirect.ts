@@ -1,6 +1,5 @@
 import { ShortenedUrlRepositoryImpl } from '@/repositories/shortened-url-repository-impl'
 import { InvalidUrl } from '@/use-cases/errors/invalid-url'
-import { UrlNotExists } from '@/use-cases/errors/url-not-exists'
 import { RedirectCaseUse } from '@/use-cases/redirect'
 import { FastifyReply, FastifyRequest } from 'fastify'
 import { z } from 'zod'
@@ -22,10 +21,6 @@ export async function redirect(request: FastifyRequest, reply: FastifyReply) {
   } catch (error) {
     if (error instanceof InvalidUrl) {
       return reply.status(400).send({ message: error.message })
-    }
-
-    if (error instanceof UrlNotExists) {
-      return reply.status(404).send({ message: error.message })
     }
     throw error
   }

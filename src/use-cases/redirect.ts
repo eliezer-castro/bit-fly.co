@@ -1,5 +1,4 @@
 import { ShortenedUrlRepository } from '@/repositories/shortened-url-repository'
-import { UrlNotExists } from './errors/url-not-exists'
 import { InvalidUrl } from './errors/invalid-url'
 
 export class RedirectCaseUse {
@@ -9,23 +8,13 @@ export class RedirectCaseUse {
   ) { }
 
   async execute(slug: string): Promise<string> {
-    const shortenedUrl = await this.shortenedUrlRepository.findByShortUrl(slug)
-
-    if (!shortenedUrl) {
+    const url = await this.shortenedUrlRepository.findByShortUrl(slug)
+    if (!url) {
       throw new InvalidUrl()
     }
-
-    const existingShortenedUrl =
-      await this.shortenedUrlRepository.findByShortUrl(slug)
-
-    if (!existingShortenedUrl) {
-      throw new UrlNotExists()
-    }
-
     await this.shortenedUrlRepository.incrementClicksAndUpdateDate(
-      existingShortenedUrl.short_url,
+      url.short_url,
     )
-
-    return existingShortenedUrl.long_url
+    return url.long_url
   }
 }
