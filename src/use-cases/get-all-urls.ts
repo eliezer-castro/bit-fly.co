@@ -1,7 +1,7 @@
 import { ShortenedUrl } from '@/models/ShortenedUrl'
 import { ShortenedUrlRepository } from '@/repositories/shortened-url-repository'
 
-interface GetAllUrls {
+export interface GetAllUrls {
   limit?: number
   orderBy?: 'clicks' | 'created_at' | 'updated_at'
   orderDir?: 'asc' | 'desc'
