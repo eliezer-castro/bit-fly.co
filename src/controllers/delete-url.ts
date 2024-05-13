@@ -9,10 +9,10 @@ import { z } from 'zod'
 
 export async function deleteUrl(request: FastifyRequest, reply: FastifyReply) {
   const deleteUrlSchema = z.object({
-    shortUrl: z.string(),
+    shortCode: z.string(),
   })
 
-  const { shortUrl } = deleteUrlSchema.parse(request.query)
+  const { shortCode } = deleteUrlSchema.parse(request.query)
 
   const token = request.headers.authorization?.replace('Bearer ', '') || ''
 
@@ -28,14 +28,15 @@ export async function deleteUrl(request: FastifyRequest, reply: FastifyReply) {
       userRepository,
     )
 
-    await deleteUrlUseCase.execute(user.userId, shortUrl)
+    await deleteUrlUseCase.execute(user.userId, shortCode)
 
     reply.send({ message: 'URL deletada com sucesso' })
   } catch (error) {
-    if (error instanceof UrlNotExists) {
+    if (error instanceof UserNotExists) {
       return reply.status(404).send({ message: error.message })
     }
-    if (error instanceof UserNotExists) {
+
+    if (error instanceof UrlNotExists) {
       return reply.status(404).send({ message: error.message })
     }
     throw error
