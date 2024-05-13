@@ -1,7 +1,7 @@
 import { ShortenedUrlRepositoryImpl } from '@/repositories/shortened-url-repository-impl'
 import { verifyUserToken } from '@/services/authUtils'
+import { AliasAlreadyExists } from '@/use-cases/errors/alias-already-exists'
 import { MissingFields } from '@/use-cases/errors/missing-fields'
-import { UrlAlreadtExists } from '@/use-cases/errors/url-already-exists'
 import { UrlNotExists } from '@/use-cases/errors/url-not-exists'
 import { UpdateShortUrlCaseUse } from '@/use-cases/update-url'
 import { FastifyReply, FastifyRequest } from 'fastify'
@@ -45,7 +45,7 @@ export async function updateUrl(request: FastifyRequest, reply: FastifyReply) {
       return reply.status(404).send({ message: error.message })
     }
 
-    if (error instanceof UrlAlreadtExists) {
+    if (error instanceof AliasAlreadyExists) {
       return reply.status(409).send({ message: error.message })
     }
     throw error
