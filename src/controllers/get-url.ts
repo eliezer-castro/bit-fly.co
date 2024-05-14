@@ -1,5 +1,4 @@
 import { ShortenedUrlRepositoryImpl } from '@/repositories/shortened-url-repository-impl'
-import { verifyUserToken } from '@/services/authUtils'
 import { UrlNotExists } from '@/use-cases/errors/url-not-exists'
 import { GetUrlUseCase } from '@/use-cases/get-url'
 import { FastifyReply, FastifyRequest } from 'fastify'
@@ -12,18 +11,12 @@ export async function getUrl(request: FastifyRequest, reply: FastifyReply) {
 
   const { shortCode } = getUrlSchema.parse(request.params)
 
-  const token = request.headers.authorization?.replace('Bearer ', '') || ''
-
-  const jwtSecret = process.env.JWT_SECRET || ''
-
-  const user = await verifyUserToken({ token, jwtSecret })
-
   try {
     const shortenedUrlRepository = new ShortenedUrlRepositoryImpl()
 
     const getUrlUseCase = new GetUrlUseCase(shortenedUrlRepository)
 
-    const url = await getUrlUseCase.execute(user.userId, shortCode)
+    const url = await getUrlUseCase.execute(request.user.sub, shortCode)
 
     reply.send(url)
   } catch (error) {

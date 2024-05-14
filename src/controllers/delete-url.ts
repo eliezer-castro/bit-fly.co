@@ -1,9 +1,8 @@
 import { ShortenedUrlRepositoryImpl } from '@/repositories/shortened-url-repository-impl'
 import { UserRepositoryImpl } from '@/repositories/user-repository-impl'
-import { verifyUserToken } from '@/services/authUtils'
 import { DeleteUrlUseCase } from '@/use-cases/delete-url'
+import { Unauthorized } from '@/use-cases/errors/unauthorized'
 import { UrlNotExists } from '@/use-cases/errors/url-not-exists'
-import { UserNotExists } from '@/use-cases/errors/user-not-exists'
 import { FastifyReply, FastifyRequest } from 'fastify'
 import { z } from 'zod'
 
@@ -14,12 +13,6 @@ export async function deleteUrl(request: FastifyRequest, reply: FastifyReply) {
 
   const { shortCode } = deleteUrlSchema.parse(request.query)
 
-  const token = request.headers.authorization?.replace('Bearer ', '') || ''
-
-  const jwtSecret = process.env.JWT_SECRET || ''
-
-  const user = await verifyUserToken({ token, jwtSecret })
-
   try {
     const shortenedUrlRepository = new ShortenedUrlRepositoryImpl()
     const userRepository = new UserRepositoryImpl()
@@ -28,11 +21,11 @@ export async function deleteUrl(request: FastifyRequest, reply: FastifyReply) {
       userRepository,
     )
 
-    await deleteUrlUseCase.execute(user.userId, shortCode)
+    await deleteUrlUseCase.execute(request.user.sub, shortCode)
 
     reply.send({ message: 'URL deletada com sucesso' })
   } catch (error) {
-    if (error instanceof UserNotExists) {
+    if (error instanceof Unauthorized) {
       return reply.status(404).send({ message: error.message })
     }
 

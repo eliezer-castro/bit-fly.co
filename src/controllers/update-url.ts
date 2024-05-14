@@ -1,5 +1,4 @@
 import { ShortenedUrlRepositoryImpl } from '@/repositories/shortened-url-repository-impl'
-import { verifyUserToken } from '@/services/authUtils'
 import { AliasAlreadyExists } from '@/use-cases/errors/alias-already-exists'
 import { MissingFields } from '@/use-cases/errors/missing-fields'
 import { UrlNotExists } from '@/use-cases/errors/url-not-exists'
@@ -18,19 +17,13 @@ export async function updateUrl(request: FastifyRequest, reply: FastifyReply) {
     request.body,
   )
 
-  const token = request.headers.authorization?.replace('Bearer ', '') || ''
-
-  const jwtSecret = process.env.JWT_SECRET || ''
-
-  const user = await verifyUserToken({ token, jwtSecret })
-
   try {
     const shortenedUrlRepository = new ShortenedUrlRepositoryImpl()
     const registerUseCase = new UpdateShortUrlCaseUse(shortenedUrlRepository)
 
     await registerUseCase.execute({
       urlId: UrlId,
-      userId: user.userId,
+      userId: request.user.sub,
       newShortUrl,
       newTitleUrl,
     })

@@ -19,7 +19,17 @@ export async function authenticate(
     const userRepository = new UserRepositoryImpl()
     const loginUseCase = new LoginUseCase(userRepository)
     const session = await loginUseCase.execute({ email, password })
-    reply.status(200).send(session)
+
+    const token = await reply.jwtSign(
+      {},
+      {
+        sign: {
+          sub: session.user.id,
+        },
+      },
+    )
+
+    return reply.status(200).send({ token })
   } catch (error) {
     if (error instanceof InvalidCredentialsErro) {
       return reply.status(400).send({ message: error.message })

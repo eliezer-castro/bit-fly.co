@@ -1,6 +1,5 @@
 import { FastifyRequest, FastifyReply } from 'fastify'
 import { z } from 'zod'
-import { verifyUserToken } from '../services/authUtils'
 import { UserRepositoryImpl } from '@/repositories/user-repository-impl'
 import { ShortenedUrlRepositoryImpl } from '@/repositories/shortened-url-repository-impl'
 import { GenerateSuggestion } from '@/use-cases/generate-suggestion'
@@ -19,12 +18,6 @@ export async function generateSuggestion(
     request.body,
   )
 
-  const token = request.headers.authorization?.replace('Bearer ', '') || ''
-
-  const jwtSecret = process.env.JWT_SECRET || ''
-
-  const user = await verifyUserToken({ token, jwtSecret })
-
   try {
     const shortenedUrlRepository = new ShortenedUrlRepositoryImpl()
     const userRepository = new UserRepositoryImpl()
@@ -34,7 +27,7 @@ export async function generateSuggestion(
     )
 
     const suggestion = await generateSuggestion.execute(
-      user.userId,
+      request.user.sub,
       title || '',
       url,
       keywords || [],

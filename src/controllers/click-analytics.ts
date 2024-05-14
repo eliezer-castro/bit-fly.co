@@ -1,5 +1,4 @@
 import { ShortenedUrlRepositoryImpl } from '@/repositories/shortened-url-repository-impl'
-import { verifyUserToken } from '@/services/authUtils'
 import { ClickAnalyticsUseCase } from '@/use-cases/click-analytics'
 import { Unauthorized } from '@/use-cases/errors/unauthorized'
 import { UrlNotExists } from '@/use-cases/errors/url-not-exists'
@@ -16,19 +15,13 @@ export async function clickAnalytics(
   const { shortCode } = shortCodeSchema.parse(request.params)
 
   try {
-    const token = request.headers.authorization?.replace('Bearer ', '') || ''
-
-    const jwtSecret = process.env.JWT_SECRET || ''
-
-    const user = await verifyUserToken({ token, jwtSecret })
-
     const shortenedUrlRepository = new ShortenedUrlRepositoryImpl()
     const clickAnalyticsUseCase = new ClickAnalyticsUseCase(
       shortenedUrlRepository,
     )
 
     const analytics = await clickAnalyticsUseCase.execute(
-      user.userId,
+      request.user.sub,
       shortCode,
     )
 

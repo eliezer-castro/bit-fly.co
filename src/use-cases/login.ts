@@ -1,6 +1,5 @@
 import { UserRepository } from '@/repositories/user-repository'
 import bcrypt from 'bcryptjs'
-import jwt from 'jsonwebtoken'
 import { InvalidCredentialsErro } from './errors/invalid-credentials-erros'
 import { User } from '@/models/User'
 
@@ -11,7 +10,6 @@ interface LoginUseCaseRequest {
 
 interface LoginUseCaseResponse {
   user: User
-  token: string
 }
 
 export class LoginUseCase {
@@ -34,17 +32,8 @@ export class LoginUseCase {
       throw new InvalidCredentialsErro()
     }
 
-    if (!process.env.JWT_SECRET) {
-      throw new Error('JWT_SECRET não está definido')
-    }
-
-    const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, {
-      expiresIn: '1h',
-    })
-
     return {
       user,
-      token,
     }
   }
 }

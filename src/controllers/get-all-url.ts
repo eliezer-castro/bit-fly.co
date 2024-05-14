@@ -1,5 +1,4 @@
 import { ShortenedUrlRepositoryImpl } from '@/repositories/shortened-url-repository-impl'
-import { verifyUserToken } from '@/services/authUtils'
 import { GetAllUrlsUseCase } from '@/use-cases/get-all-urls'
 import { FastifyReply, FastifyRequest } from 'fastify'
 import { z } from 'zod'
@@ -17,17 +16,11 @@ export async function getAllUrls(request: FastifyRequest, reply: FastifyReply) {
     request.query,
   )
 
-  const token = request.headers.authorization?.replace('Bearer ', '') || ''
-
-  const jwtSecret = process.env.JWT_SECRET || ''
-
-  const user = await verifyUserToken({ token, jwtSecret })
-
   const shortenedUrlRepository = new ShortenedUrlRepositoryImpl()
 
   const getAllUrlsUseCase = new GetAllUrlsUseCase(shortenedUrlRepository)
 
-  const urls = await getAllUrlsUseCase.execute(user.userId, {
+  const urls = await getAllUrlsUseCase.execute(request.user.sub, {
     limit,
     orderBy,
     orderDir,

@@ -1,6 +1,5 @@
 import { FastifyInstance } from 'fastify'
 import { generateSuggestion } from './controllers/generate-suggestion'
-import { authMiddleware } from './middleware/authMiddleware'
 import { registerUser } from './controllers/register'
 import { authenticate } from './controllers/login'
 import { createUrl } from './controllers/create-url'
@@ -10,12 +9,13 @@ import { getAllUrls } from './controllers/get-all-url'
 import { getUrl } from './controllers/get-url'
 import { deleteUrl } from './controllers/delete-url'
 import { clickAnalytics } from './controllers/click-analytics'
+import { verifyJTW } from './middleware/verify-jwt'
 
 export async function appRoutes(app: FastifyInstance) {
   app.post(
     '/api/v1/shorten-url',
     {
-      preHandler: authMiddleware,
+      onRequest: [verifyJTW],
       schema: {
         tags: ['Shorten URL'],
         body: {
@@ -41,7 +41,7 @@ export async function appRoutes(app: FastifyInstance) {
     createUrl,
   )
 
-  app.put('/api/v1/update-url', { preHandler: authMiddleware }, updateUrl)
+  app.put('/api/v1/update-url', { onRequest: [verifyJTW] }, updateUrl)
 
   app.get(
     '/api/v1/:shortCode',
@@ -71,7 +71,7 @@ export async function appRoutes(app: FastifyInstance) {
   app.get(
     '/api/v1/user/urls',
     {
-      preHandler: authMiddleware,
+      onRequest: [verifyJTW],
 
       schema: {
         tags: ['Shorten URL'],
@@ -115,7 +115,7 @@ export async function appRoutes(app: FastifyInstance) {
   app.get(
     '/api/v1/details/:shortCode',
     {
-      preHandler: authMiddleware,
+      onRequest: [verifyJTW],
 
       schema: {
         tags: ['Shorten URL'],
@@ -150,16 +150,15 @@ export async function appRoutes(app: FastifyInstance) {
   app.delete(
     '/api/v1/delete-url',
     {
-      preHandler: authMiddleware,
-
+      onRequest: [verifyJTW],
       schema: {
         tags: ['Shorten URL'],
         querystring: {
           type: 'object',
           properties: {
-            shortUrl: { type: 'string' },
+            shortCode: { type: 'string' },
           },
-          required: ['shortUrl'],
+          required: ['shortCode'],
         },
         security: [{ BearerAuth: [] }],
         response: {
@@ -219,17 +218,6 @@ export async function appRoutes(app: FastifyInstance) {
           200: {
             type: 'object',
             properties: {
-              user: {
-                type: 'object',
-                properties: {
-                  id: { type: 'string' },
-                  name: { type: 'string' },
-                  email: { type: 'string' },
-                  password: { type: 'string' }, // Se necessário
-                  created_at: { type: 'string', format: 'date-time' },
-                },
-                required: ['id', 'name', 'email', 'created_at'], // Adicione 'password' se necessário
-              },
               token: { type: 'string' },
             },
           },
@@ -240,12 +228,19 @@ export async function appRoutes(app: FastifyInstance) {
   )
 
   app.get(
-    '/api/v1/shortCode/:shortCode/clickAnalytics',
+    '/api/v1/:shortCode/clickAnalytics',
     {
-      preHandler: authenticate,
+      onRequest: [verifyJTW],
       schema: {
         tags: ['Shorten URL'],
         security: [{ BearerAuth: [] }],
+        params: {
+          type: 'object',
+          properties: {
+            shortCode: { type: 'string' },
+          },
+          required: ['shortCode'],
+        },
         response: {
           200: {
             type: 'object',
@@ -273,7 +268,7 @@ export async function appRoutes(app: FastifyInstance) {
 
   app.post(
     '/api/v1/generate-suggestion',
-    { preHandler: authMiddleware },
+    { onRequest: [verifyJTW] },
     generateSuggestion,
   )
 }
