@@ -10,6 +10,7 @@ import { getUrl } from './controllers/get-url'
 import { deleteUrl } from './controllers/delete-url'
 import { clickAnalytics } from './controllers/click-analytics'
 import { verifyJTW } from './middleware/verify-jwt'
+import { refresh } from './controllers/refresh'
 
 export async function appRoutes(app: FastifyInstance) {
   app.post(
@@ -41,7 +42,16 @@ export async function appRoutes(app: FastifyInstance) {
     createUrl,
   )
 
-  app.put('/api/v1/update-url', { onRequest: [verifyJTW] }, updateUrl)
+  app.put(
+    '/api/v1/update-url',
+    {
+      onRequest: [verifyJTW],
+      schema: {
+        tags: ['Shorten URL'],
+      },
+    },
+    updateUrl,
+  )
 
   app.get(
     '/api/v1/:shortCode',
@@ -268,7 +278,22 @@ export async function appRoutes(app: FastifyInstance) {
 
   app.post(
     '/api/v1/generate-suggestion',
-    { onRequest: [verifyJTW] },
+    {
+      onRequest: [verifyJTW],
+      schema: {
+        tags: ['Shorten URL'],
+      },
+    },
     generateSuggestion,
+  )
+
+  app.patch(
+    '/api/v1/token/refresh',
+    {
+      schema: {
+        tags: ['Authentication'],
+      },
+    },
+    refresh,
   )
 }
