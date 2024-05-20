@@ -4,27 +4,45 @@ import crypto from 'crypto'
 const prisma = new PrismaClient()
 
 function generateRandomHash(hashLength: number): string {
-  const randomBytes = crypto.randomBytes(hashLength)
-  const hash = randomBytes.toString('hex')
-  return hash.slice(0, hashLength)
+  const allowedCharacters =
+    'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
+  let hash = ''
+  for (let i = 0; i < hashLength; i++) {
+    const randomIndex = Math.floor(
+      (crypto.randomBytes(1)[0] / 256) * allowedCharacters.length,
+    )
+    hash += allowedCharacters[randomIndex]
+  }
+  return hash
 }
 
 async function isHashUnique(hash: string) {
-  const existingShortenedUrl = await prisma.shortenedUrl.findUnique({
-    where: {
-      short_url: hash,
-    },
-  })
-  return !existingShortenedUrl
+  try {
+    const existingShortenedUrl = await prisma.shortenedUrl.findUnique({
+      where: {
+        short_url: hash,
+      },
+    })
+    return existingShortenedUrl === null
+  } catch (error) {
+    console.error('Error querying the database: ', error)
+    throw error
+  }
 }
 
-export async function generateUniqueShortenedURL(): Promise<string> {
-  let hash: string
+export async function generateUniqueShortenedURL(
+  retries = 10,
+): Promise<string> {
   const hashLength = 7
 
-  do {
-    hash = generateRandomHash(hashLength)
-  } while (!(await isHashUnique(hash)))
+  for (let attempt = 0; attempt < retries; attempt++) {
+    const hash = generateRandomHash(hashLength)
+    if (await isHashUnique(hash)) {
+      return hash
+    }
+  }
 
-  return hash
+  throw new Error(
+    'Failed to generate unique shortened URL after maximum retries',
+  )
 }
