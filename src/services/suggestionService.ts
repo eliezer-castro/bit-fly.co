@@ -3,18 +3,16 @@ import dotenv from 'dotenv'
 
 dotenv.config()
 
-export async function generateSuggestionPrompts(
-  title: string,
-  url: string,
-  keywords: string[],
-): Promise<string> {
-  if (!process.env.GEMINI_API_KEY) {
-    throw new Error('GEMINI_API_KEY não está definido')
-  }
-  const gemini = new GoogleGenerativeAI(process.env.GEMINI_API_KEY)
-  const modelId = 'gemini-pro'
-  const model = gemini.getGenerativeModel({ model: modelId })
-  const prompt = `
+if (!process.env.GEMINI_API_KEY) {
+  throw new Error('GEMINI_API_KEY não está definido')
+}
+
+const gemini = new GoogleGenerativeAI(process.env.GEMINI_API_KEY)
+const modelId = 'gemini-pro'
+const model = gemini.getGenerativeModel({ model: modelId })
+
+function createPrompt(title: string, url: string, keywords: string[]): string {
+  return `
     Título: ${title}
     url: ${url}
     Palavras-chave: ${keywords.join(', ')}
@@ -28,12 +26,23 @@ export async function generateSuggestionPrompts(
     Palavras-chave: "bolo, chocolate, receita, culinária, sobremesa"
 
     Exemplo de saída: "receita-bolo-chocolate"
+  `
+}
 
-    `
+export async function generateSuggestionPrompts(
+  title: string,
+  url: string,
+  keywords: string[],
+): Promise<string> {
+  const prompt = createPrompt(title, url, keywords)
 
-  const result = await model.generateContent(prompt)
-  const response = await result.response
-  const suggestion = response.text()
-
-  return suggestion
+  try {
+    const result = await model.generateContent(prompt)
+    const response = await result.response
+    const suggestion = response.text()
+    return suggestion
+  } catch (error) {
+    console.error('Error generating content: ', error)
+    throw error
+  }
 }
