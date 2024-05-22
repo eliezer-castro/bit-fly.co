@@ -1,11 +1,29 @@
-version: '3'
+version: '3.8'
 
 services:
+  api:
+    container_name: bitfly_api
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: always
+    ports:
+      - "3333:3333"
+    env_file:
+      - .env
+    depends_on:
+      - pg
   pg:
+    container_name: bitfly_db
     image: bitnami/postgresql
+    restart: always
     ports:
       - "5432:5432"
-    environment:
-      - POSTGRES_DB=bitfly_db
-      - POSTGRES_USER=bitfly
-      - POSTGRES_PASSWORD=bitfly@123!
+    env_file:
+      - .env
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:
+    name: bitfly_pgdata
