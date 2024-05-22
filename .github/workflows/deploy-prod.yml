@@ -5,16 +5,17 @@ on:
     branches:
       - main
 
-env:
-  POSTGRES_USER: ${{prod.POSTGRES_USER}}
-  POSTGRES_PASSWORD: ${{secrets.POSTGRES_PASSWORD}}
-  POSTGRES_DB: ${{secrets.POSTGRES_DB}}
-  DATABASE_URL: postgresql://${{POSTGRES_USER}}:${{POSTGRES_PASSWORD}}@pg:5432/${{POSTGRES_DB}}?schema=public&sslmode=prefer
-  JWT_SECRET: ${{secrets.JWT_SECRET}}
-  GEMINI_API_KEY: ${{secrets.GEMINI_API_KEY}}
+
 jobs:
   tests:
     runs-on: ubuntu-latest
+    env:
+      POSTGRES_USER: ${{secrets.POSTGRES_USER}}
+      POSTGRES_PASSWORD: ${{secrets.POSTGRES_PASSWORD}}
+      POSTGRES_DB: ${{secrets.POSTGRES_DB}}
+      DATABASE_URL: postgresql://${{POSTGRES_USER}}:${{POSTGRES_PASSWORD}}@pg:5432/${{POSTGRES_DB}}?schema=public&sslmode=prefer
+      JWT_SECRET: ${{secrets.JWT_SECRET}}
+      GEMINI_API_KEY: ${{secrets.GEMINI_API_KEY}}
     steps:
       - name: Checkout 
         uses: actions/checkout@v2
