@@ -54,7 +54,7 @@ export async function appRoutes(app: FastifyInstance) {
   )
 
   app.get(
-    '/v1/:shortCode',
+    '/:shortCode',
     {
       schema: {
         tags: ['Shorten URL'],
