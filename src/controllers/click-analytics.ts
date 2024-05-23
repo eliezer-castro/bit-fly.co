@@ -10,9 +10,9 @@ export async function clickAnalytics(
   reply: FastifyReply,
 ) {
   const shortCodeSchema = z.object({
-    shortCode: z.string(),
+    id: z.string(),
   })
-  const { shortCode } = shortCodeSchema.parse(request.params)
+  const { id } = shortCodeSchema.parse(request.params)
 
   try {
     const shortenedUrlRepository = new ShortenedUrlRepositoryImpl()
@@ -20,10 +20,7 @@ export async function clickAnalytics(
       shortenedUrlRepository,
     )
 
-    const analytics = await clickAnalyticsUseCase.execute(
-      request.user.sub,
-      shortCode,
-    )
+    const analytics = await clickAnalyticsUseCase.execute(request.user.sub, id)
 
     reply.send(analytics)
   } catch (error) {

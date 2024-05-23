@@ -8,10 +8,10 @@ import { z } from 'zod'
 
 export async function deleteUrl(request: FastifyRequest, reply: FastifyReply) {
   const deleteUrlSchema = z.object({
-    shortCode: z.string(),
+    id: z.string(),
   })
 
-  const { shortCode } = deleteUrlSchema.parse(request.query)
+  const { id } = deleteUrlSchema.parse(request.params)
 
   try {
     const shortenedUrlRepository = new ShortenedUrlRepositoryImpl()
@@ -21,7 +21,7 @@ export async function deleteUrl(request: FastifyRequest, reply: FastifyReply) {
       userRepository,
     )
 
-    await deleteUrlUseCase.execute(request.user.sub, shortCode)
+    await deleteUrlUseCase.execute(request.user.sub, id)
 
     reply.send({ message: 'URL deletada com sucesso' })
   } catch (error) {

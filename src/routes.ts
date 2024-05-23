@@ -14,15 +14,15 @@ import { refresh } from './controllers/refresh'
 
 export async function appRoutes(app: FastifyInstance) {
   app.post(
-    '/v1/shorten-url',
+    '/v1/urls',
     {
       onRequest: [verifyJTW],
       schema: {
-        tags: ['Shorten URL'],
+        tags: ['URLs'],
         body: {
           type: 'object',
           properties: {
-            url: { type: 'string' },
+            longUrl: { type: 'string' },
             title: { type: 'string' },
             alias: { type: 'string' },
           },
@@ -43,11 +43,25 @@ export async function appRoutes(app: FastifyInstance) {
   )
 
   app.put(
-    '/v1/update-url',
+    '/v1/urls/:id',
     {
       onRequest: [verifyJTW],
       schema: {
-        tags: ['Shorten URL'],
+        tags: ['URLs'],
+        params: {
+          type: 'object',
+          properties: {
+            id: { type: 'string' },
+          },
+          required: ['id'],
+        },
+        body: {
+          type: 'object',
+          properties: {
+            title: { type: 'string' },
+            short_url: { type: 'string' },
+          },
+        },
       },
     },
     updateUrl,
@@ -57,7 +71,7 @@ export async function appRoutes(app: FastifyInstance) {
     '/:shortCode',
     {
       schema: {
-        tags: ['Shorten URL'],
+        tags: ['URLs'],
         params: {
           type: 'object',
           properties: {
@@ -79,12 +93,11 @@ export async function appRoutes(app: FastifyInstance) {
   )
 
   app.get(
-    '/v1/user/urls',
+    '/v1/urls',
     {
       onRequest: [verifyJTW],
-
       schema: {
-        tags: ['Shorten URL'],
+        tags: ['URLs'],
         security: [{ BearerAuth: [] }],
         querystring: {
           type: 'object',
@@ -123,12 +136,11 @@ export async function appRoutes(app: FastifyInstance) {
   )
 
   app.get(
-    '/v1/details/:shortCode',
+    '/v1/urls/:shortCode/details',
     {
       onRequest: [verifyJTW],
-
       schema: {
-        tags: ['Shorten URL'],
+        tags: ['URLs'],
         params: {
           type: 'object',
           properties: {
@@ -158,17 +170,17 @@ export async function appRoutes(app: FastifyInstance) {
   )
 
   app.delete(
-    '/v1/delete-url',
+    '/v1/urls/:id',
     {
       onRequest: [verifyJTW],
       schema: {
-        tags: ['Shorten URL'],
-        querystring: {
+        tags: ['URLs'],
+        params: {
           type: 'object',
           properties: {
-            shortCode: { type: 'string' },
+            id: { type: 'string' },
           },
-          required: ['shortCode'],
+          required: ['id'],
         },
         security: [{ BearerAuth: [] }],
         response: {
@@ -182,6 +194,55 @@ export async function appRoutes(app: FastifyInstance) {
       },
     },
     deleteUrl,
+  )
+
+  app.post(
+    '/v1/urls/suggestions',
+    {
+      onRequest: [verifyJTW],
+      schema: {
+        tags: ['URLs'],
+      },
+    },
+    generateSuggestion,
+  )
+
+  app.get(
+    '/v1/urls/:id/analytics',
+    {
+      onRequest: [verifyJTW],
+      schema: {
+        tags: ['URLs'],
+        security: [{ BearerAuth: [] }],
+        params: {
+          type: 'object',
+          properties: {
+            id: { type: 'string' },
+          },
+          required: ['id'],
+        },
+        response: {
+          200: {
+            type: 'object',
+            properties: {
+              totalClicks: {
+                type: 'integer',
+                description: 'Número total de cliques',
+              },
+              clickDates: {
+                type: 'object',
+                description: 'Número de cliques por data',
+                additionalProperties: {
+                  type: 'integer',
+                  description: 'Número de cliques em uma determinada data',
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+    clickAnalytics,
   )
 
   app.post(
@@ -212,7 +273,7 @@ export async function appRoutes(app: FastifyInstance) {
   )
 
   app.post(
-    '/v1/sessions',
+    '/v1/login',
     {
       schema: {
         tags: ['Authentication'],
@@ -235,56 +296,6 @@ export async function appRoutes(app: FastifyInstance) {
       },
     },
     authenticate,
-  )
-
-  app.get(
-    '/v1/:shortCode/clickAnalytics',
-    {
-      onRequest: [verifyJTW],
-      schema: {
-        tags: ['Shorten URL'],
-        security: [{ BearerAuth: [] }],
-        params: {
-          type: 'object',
-          properties: {
-            shortCode: { type: 'string' },
-          },
-          required: ['shortCode'],
-        },
-        response: {
-          200: {
-            type: 'object',
-            properties: {
-              totalClicks: {
-                type: 'integer',
-                description: 'Número total de cliques',
-              },
-
-              clickDates: {
-                type: 'object',
-                description: 'Número de cliques por data',
-                additionalProperties: {
-                  type: 'integer',
-                  description: 'Número de cliques em uma determinada data',
-                },
-              },
-            },
-          },
-        },
-      },
-    },
-    clickAnalytics,
-  )
-
-  app.post(
-    '/v1/generate-suggestion',
-    {
-      onRequest: [verifyJTW],
-      schema: {
-        tags: ['Shorten URL'],
-      },
-    },
-    generateSuggestion,
   )
 
   app.patch(

@@ -7,25 +7,27 @@ import { FastifyReply, FastifyRequest } from 'fastify'
 import { z } from 'zod'
 
 export async function updateUrl(request: FastifyRequest, reply: FastifyReply) {
-  const updateUrlSchema = z.object({
-    UrlId: z.string(),
-    newShortUrl: z.string().optional(),
-    newTitleUrl: z.string().optional(),
+  const updateBodySchema = z.object({
+    short_url: z.string().optional(),
+    title: z.string().optional(),
   })
 
-  const { UrlId, newShortUrl, newTitleUrl } = updateUrlSchema.parse(
-    request.body,
-  )
+  const updateParamsSchema = z.object({
+    id: z.string(),
+  })
+
+  const { short_url, title } = updateBodySchema.parse(request.body)
+  const { id } = updateParamsSchema.parse(request.params)
 
   try {
     const shortenedUrlRepository = new ShortenedUrlRepositoryImpl()
     const registerUseCase = new UpdateShortUrlCaseUse(shortenedUrlRepository)
 
     await registerUseCase.execute({
-      urlId: UrlId,
+      urlId: id,
       userId: request.user.sub,
-      newShortUrl,
-      newTitleUrl,
+      short_url,
+      title,
     })
 
     reply.send({ message: 'URL atualizada com sucesso' })

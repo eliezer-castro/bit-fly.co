@@ -8,8 +8,8 @@ import { AliasAlreadyExists } from './errors/alias-already-exists'
 export interface UpdateShortUrl {
   urlId: string
   userId: string
-  newShortUrl?: string
-  newTitleUrl?: string
+  short_url?: string
+  title?: string
 }
 
 export class UpdateShortUrlCaseUse {
@@ -22,10 +22,10 @@ export class UpdateShortUrlCaseUse {
   async execute({
     urlId,
     userId,
-    newShortUrl,
-    newTitleUrl,
+    short_url,
+    title,
   }: UpdateShortUrl): Promise<ShortenedUrl> {
-    if (!newShortUrl && !newTitleUrl) {
+    if (!short_url && !title) {
       throw new MissingFields()
     }
 
@@ -38,8 +38,8 @@ export class UpdateShortUrlCaseUse {
       throw new UrlNotExists()
     }
 
-    if (newShortUrl) {
-      slug = generateSlugFromUrl(newShortUrl)
+    if (short_url) {
+      slug = generateSlugFromUrl(short_url)
 
       const existingUrl = await this.shortenedUrlRepository.findByShortUrl(slug)
       if (existingUrl) {
@@ -47,15 +47,15 @@ export class UpdateShortUrlCaseUse {
       }
     }
 
-    const url = newShortUrl || existingShortenedUrl.short_url
-    const title = newTitleUrl || existingShortenedUrl.title
+    const _url = short_url || existingShortenedUrl.short_url
+    const _title = title || existingShortenedUrl.title
 
     const returnUpdateShortUrl =
       await this.shortenedUrlRepository.updateShortenedUrl(
         urlId,
         userId,
-        slug || url,
-        title,
+        slug || _url,
+        _title,
       )
 
     return returnUpdateShortUrl

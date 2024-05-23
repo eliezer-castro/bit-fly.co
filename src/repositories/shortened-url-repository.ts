@@ -4,7 +4,7 @@ export interface ShortenedUrlRepository {
   findByShortUrl(shortUrl: string): Promise<ShortenedUrl | null>
   findUrlByUserId(
     userId: string,
-    shortUrl: string,
+    shortUrlId: string,
   ): Promise<ShortenedUrl | null>
   findAllByUserId(
     userId: string,
@@ -19,7 +19,7 @@ export interface ShortenedUrlRepository {
   findByShortId(shortId: string): Promise<ShortenedUrl | null>
   createShortenedUrl(shortenedUrl: ShortenedUrl): Promise<ShortenedUrl>
   incrementClicksAndUpdateDate(shortCode: string): Promise<void>
-  deleteUrlByUserId(userId: string, shortCode: string): Promise<void>
+  deleteUrlByUserId(userId: string, shortUrlId: string): Promise<void>
   updateShortenedUrl(
     urlId: string,
     userId: string,

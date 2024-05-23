@@ -68,11 +68,11 @@ export class ShortenedUrlRepositoryImpl implements ShortenedUrlRepository {
     })
   }
 
-  async deleteUrlByUserId(userId: string, shortUrl: string): Promise<void> {
+  async deleteUrlByUserId(userId: string, shortUrlId: string): Promise<void> {
     await this.prisma.shortenedUrl.delete({
       where: {
         user_id: userId,
-        short_url: shortUrl,
+        id: shortUrlId,
       },
     })
   }
@@ -97,10 +97,10 @@ export class ShortenedUrlRepositoryImpl implements ShortenedUrlRepository {
 
   findUrlByUserId(
     userId: string,
-    shortUrl: string,
+    shortUrlId: string,
   ): Promise<ShortenedUrl | null> {
     return this.prisma.shortenedUrl.findFirst({
-      where: { user_id: userId, short_url: shortUrl },
+      where: { user_id: userId, id: shortUrlId },
     })
   }
 
