@@ -14,7 +14,7 @@ import { refresh } from './controllers/refresh'
 
 export async function appRoutes(app: FastifyInstance) {
   app.post(
-    '/api/v1/shorten-url',
+    '/v1/shorten-url',
     {
       onRequest: [verifyJTW],
       schema: {
@@ -43,7 +43,7 @@ export async function appRoutes(app: FastifyInstance) {
   )
 
   app.put(
-    '/api/v1/update-url',
+    '/v1/update-url',
     {
       onRequest: [verifyJTW],
       schema: {
@@ -54,7 +54,7 @@ export async function appRoutes(app: FastifyInstance) {
   )
 
   app.get(
-    '/api/v1/:shortCode',
+    '/v1/:shortCode',
     {
       schema: {
         tags: ['Shorten URL'],
@@ -79,7 +79,7 @@ export async function appRoutes(app: FastifyInstance) {
   )
 
   app.get(
-    '/api/v1/user/urls',
+    '/v1/user/urls',
     {
       onRequest: [verifyJTW],
 
@@ -123,7 +123,7 @@ export async function appRoutes(app: FastifyInstance) {
   )
 
   app.get(
-    '/api/v1/details/:shortCode',
+    '/v1/details/:shortCode',
     {
       onRequest: [verifyJTW],
 
@@ -158,7 +158,7 @@ export async function appRoutes(app: FastifyInstance) {
   )
 
   app.delete(
-    '/api/v1/delete-url',
+    '/v1/delete-url',
     {
       onRequest: [verifyJTW],
       schema: {
@@ -185,7 +185,7 @@ export async function appRoutes(app: FastifyInstance) {
   )
 
   app.post(
-    '/api/v1/register',
+    '/v1/register',
     {
       schema: {
         tags: ['Authentication'],
@@ -212,7 +212,7 @@ export async function appRoutes(app: FastifyInstance) {
   )
 
   app.post(
-    '/api/v1/sessions',
+    '/v1/sessions',
     {
       schema: {
         tags: ['Authentication'],
@@ -238,7 +238,7 @@ export async function appRoutes(app: FastifyInstance) {
   )
 
   app.get(
-    '/api/v1/:shortCode/clickAnalytics',
+    '/v1/:shortCode/clickAnalytics',
     {
       onRequest: [verifyJTW],
       schema: {
@@ -277,7 +277,7 @@ export async function appRoutes(app: FastifyInstance) {
   )
 
   app.post(
-    '/api/v1/generate-suggestion',
+    '/v1/generate-suggestion',
     {
       onRequest: [verifyJTW],
       schema: {
@@ -288,7 +288,7 @@ export async function appRoutes(app: FastifyInstance) {
   )
 
   app.patch(
-    '/api/v1/token/refresh',
+    '/v1/token/refresh',
     {
       schema: {
         tags: ['Authentication'],
