@@ -90,7 +90,7 @@ jobs:
             docker pull eliezercastro/bit-fly.co:latest
             docker stop server || true
             docker rm server || true
-            docker run -d  --name server --network host -p 3333:333 eliezercastro/bit-fly.co:latest
+            docker run -d  --name server --network host -p 3333:333 --env-file /root/.env eliezercastro/bit-fly.co:latest
 
     
     
