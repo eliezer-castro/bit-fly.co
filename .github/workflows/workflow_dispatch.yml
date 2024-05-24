@@ -2,6 +2,7 @@ on:
   push:
     branches:
       - main
+
 name: Workflow Dispatch 
 
 jobs:
@@ -23,12 +24,13 @@ jobs:
         run: yarn install
       
       - name: Write the .env file 📝 
-        run: echo "GEMINI_API_KEY=${{ secrets.GEMINI_API_KEY }}" > .env
-        run: echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> .env
-        run: echo "POSTGRES_DB=${{ secrets.POSTGRES_DB }}" >> .env
-        run: echo "POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}" >> .env
-        run: echo "POSTGRES_USER=${{ secrets.POSTGRES_USER }}" >> .env
-        run: echo "DATABASE_URL=${{ secrets.DATABASE_URL }}" >> .env
+        run: |
+          echo "GEMINI_API_KEY=${{ secrets.GEMINI_API_KEY }}" > .env
+          echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> .env
+          echo "POSTGRES_DB=${{ secrets.POSTGRES_DB }}" >> .env
+          echo "POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}" >> .env
+          echo "POSTGRES_USER=${{ secrets.POSTGRES_USER }}" >> .env
+          echo "DATABASE_URL=${{ secrets.DATABASE_URL }}" >> .env
         
-      name: Run Tests
+      - name: Run Tests
         run: yarn test
