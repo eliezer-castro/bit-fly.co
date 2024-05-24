@@ -5,11 +5,11 @@ on:
 name: Workflow Dispatch 
 
 jobs:
-  build:
-    runs-on: ubuntu-20.x
+  Test:
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v3
 
       - name: Setup Node.js
         uses: actions/setup-node@v3
