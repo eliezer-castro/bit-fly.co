@@ -1,4 +1,4 @@
-export class InvalidCredentialsErro extends Error {
+export class InvalidCredentials extends Error {
   constructor() {
     super('Invalid credentials')
   }

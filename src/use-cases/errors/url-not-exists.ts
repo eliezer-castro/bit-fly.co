@@ -1,5 +1,5 @@
 export class UrlNotExists extends Error {
   constructor() {
-    super('URL não encontrada')
+    super('URL not found')
   }
 }

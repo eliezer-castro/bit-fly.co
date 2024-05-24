@@ -1,5 +1,5 @@
 export class MissingFields extends Error {
   constructor() {
-    super('Campos obrigatórios não encontrados')
+    super('Required fields not found')
   }
 }
