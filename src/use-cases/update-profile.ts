@@ -66,7 +66,6 @@ export class UpdateUserProfileUseCase {
         currentPassword,
         user.password,
       )
-      console.log('isCurrentPasswordValid', isCurrentPasswordValid)
 
       if (!isCurrentPasswordValid) {
         throw new InvalidPassword()
