@@ -67,7 +67,7 @@ jobs:
           docker tag eliezercastro/bit-fly.co:$DOCKER_IMAGE_VERSION eliezercastro/bit-fly.co:latest
       - name: 🐳 Docker Push
         run: |
-          docker image push kothehub/kothelog-front:$DOCKER_IMAGE_VERSION
-          docker image push kothehub/kothelog-front:latest
+          docker image push eliezercastro/bit-fly.co:$DOCKER_IMAGE_VERSION
+          docker image push eliezercastro/bit-fly.co:latest
     
 
