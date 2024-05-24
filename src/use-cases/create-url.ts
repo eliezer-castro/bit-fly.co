@@ -1,9 +1,8 @@
 import { ShortenedUrl } from '@/models/ShortenedUrl'
 import { ShortenedUrlRepository } from '@/repositories/shortened-url-repository'
-import { UserRepository } from '@/repositories/user-repository'
-import { generateUniqueShortenedURL } from '@/services/generateUniqueShortenedURL'
 import { nanoid } from 'nanoid'
 import { AliasAlreadyExists } from './errors/alias-already-exists'
+import { UniqueShortenedURLGenerator } from '@/services/generateUniqueShortenedURL'
 
 export interface CreateShortUrl {
   url: string
@@ -13,7 +12,6 @@ export interface CreateShortUrl {
 }
 export class CreateShortUrlUseCase {
   constructor(
-    private userRepository: UserRepository,
     private shortenedUrlRepository: ShortenedUrlRepository,
     // eslint-disable-next-line prettier/prettier
   ) { }
@@ -31,7 +29,13 @@ export class CreateShortUrlUseCase {
         throw new AliasAlreadyExists()
       }
     }
-    const hash = alias || (await generateUniqueShortenedURL())
+
+    const uniqueShortenedURLGenerator = new UniqueShortenedURLGenerator(
+      this.shortenedUrlRepository,
+    )
+
+    const hash =
+      alias || (await uniqueShortenedURLGenerator.generateUniqueShortenedURL())
 
     const newShortUrl: ShortenedUrl = {
       id: nanoid(),

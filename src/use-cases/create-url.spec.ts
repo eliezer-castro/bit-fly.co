@@ -1,17 +1,15 @@
 import { InMemoryShortenedUrlRepository } from '@/repositories/in-memory/in-memory-shortened-url-repository'
 import { describe, it, expect, beforeEach } from 'vitest'
 import { CreateShortUrlUseCase } from './create-url'
-import { InMemoryUserRepository } from '@/repositories/in-memory/in-memory-user-repository'
 import { AliasAlreadyExists } from './errors/alias-already-exists'
 
 let shortnedUrlRepository: InMemoryShortenedUrlRepository
-let userRepository: InMemoryUserRepository
 let sut: CreateShortUrlUseCase
 
 describe('Create URL Use Case', () => {
   beforeEach(() => {
     shortnedUrlRepository = new InMemoryShortenedUrlRepository()
-    sut = new CreateShortUrlUseCase(userRepository, shortnedUrlRepository)
+    sut = new CreateShortUrlUseCase(shortnedUrlRepository)
   })
 
   it('should be able to create a new shortened URL', async () => {
