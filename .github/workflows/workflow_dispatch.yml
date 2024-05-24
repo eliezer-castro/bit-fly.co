@@ -87,10 +87,11 @@ jobs:
           key: ${{ secrets.DROPLET_SSH_PRIVATE_KEY }}
           port: ${{ secrets.DROPLET_SSH_PORT }}
           script: |
-            docker pull eliezercastro/bit-fly.co:latest
-            docker stop server || true
-            docker rm server || true
-            docker run -d  --name server --network host -p 3333:333 --env-file /root/.env eliezercastro/bit-fly.co:latest
+            cd ..
+            cd home
+            docker-compose pull
+            docker-compose down
+            docker-compose up -d
 
     
     
