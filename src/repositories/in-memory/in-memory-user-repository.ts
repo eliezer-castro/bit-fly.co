@@ -18,7 +18,7 @@ export class InMemoryUserRepository implements UserRepository {
 
   async createUser(data: User): Promise<User> {
     const user = {
-      id: '1',
+      id: data.id,
       name: data.name,
       email: data.email,
       password: data.password,
@@ -28,5 +28,32 @@ export class InMemoryUserRepository implements UserRepository {
     this.items.push(user)
 
     return user
+  }
+
+  updateUserProfile(
+    userId: string,
+    name?: string | undefined,
+    email?: string | undefined,
+    password?: string | undefined,
+  ): Promise<User | null> {
+    const user = this.items.find((user) => user.id === userId)
+
+    if (!user) {
+      return Promise.resolve(null)
+    }
+
+    if (name) {
+      user.name = name
+    }
+
+    if (email) {
+      user.email = email
+    }
+
+    if (password) {
+      user.password = password
+    }
+
+    return Promise.resolve(user)
   }
 }

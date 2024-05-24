@@ -15,6 +15,26 @@ export class UserRepositoryImpl implements UserRepository {
     return this.prisma.user.create({ data: user })
   }
 
+  async updateUserProfile(
+    userId: string,
+    name?: string,
+    email?: string,
+    password?: string,
+  ): Promise<User | null> {
+    const user = await this.prisma.user.update({
+      where: {
+        id: userId,
+      },
+      data: {
+        name,
+        email,
+        password,
+      },
+    })
+
+    return user
+  }
+
   private prisma: PrismaClient
 
   constructor() {

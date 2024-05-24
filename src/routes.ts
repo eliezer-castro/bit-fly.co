@@ -11,6 +11,7 @@ import { deleteUrl } from './controllers/delete-url'
 import { clickAnalytics } from './controllers/click-analytics'
 import { verifyJTW } from './middleware/verify-jwt'
 import { refresh } from './controllers/refresh'
+import { updateProfile } from './controllers/update-profile'
 
 export async function appRoutes(app: FastifyInstance) {
   app.post(
@@ -306,5 +307,43 @@ export async function appRoutes(app: FastifyInstance) {
       },
     },
     refresh,
+  )
+
+  app.put(
+    '/v1/user/profile',
+    {
+      onRequest: [verifyJTW],
+      schema: {
+        tags: ['Users'],
+        security: [{ BearerAuth: [] }],
+        body: {
+          type: 'object',
+          properties: {
+            name: { type: 'string' },
+            email: { type: 'string' },
+            currentPassword: { type: 'string' },
+            password: { type: 'string' },
+          },
+        },
+        response: {
+          200: {
+            type: 'object',
+            properties: {
+              message: { type: 'string' },
+              data: {
+                type: 'object',
+                properties: {
+                  id: { type: 'string' },
+                  name: { type: 'string' },
+                  email: { type: 'string' },
+                  password: { type: 'string' },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+    updateProfile,
   )
 }
