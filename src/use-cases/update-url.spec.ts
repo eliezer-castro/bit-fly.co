@@ -26,8 +26,8 @@ describe('Update URL Use Case', () => {
     const { short_url, title } = await sut.execute({
       urlId: 'shortened-url-id',
       userId: 'user-id',
-      newShortUrl: 'new-example',
-      newTitleUrl: 'New Example',
+      short_url: 'new-example',
+      title: 'New Example',
     })
 
     expect(short_url).toEqual('new-example')
@@ -55,8 +55,8 @@ describe('Update URL Use Case', () => {
       await sut.execute({
         urlId: 'shortened-url-id',
         userId: 'user-id',
-        newShortUrl: 'new-example',
-        newTitleUrl: 'New Example',
+        short_url: 'new-example',
+        title: 'New Example',
       })
     }).rejects.toThrowError(AliasAlreadyExists)
   })
@@ -66,8 +66,8 @@ describe('Update URL Use Case', () => {
       await sut.execute({
         urlId: 'shortened-url-id',
         userId: 'user-id',
-        newShortUrl: 'new-example',
-        newTitleUrl: 'New Example',
+        short_url: 'new-example',
+        title: 'New Example',
       })
     }).rejects.toThrowError(UrlNotExists)
   })
