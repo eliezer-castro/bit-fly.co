@@ -6,7 +6,7 @@ on:
 name: Workflow Dispatch 
 
 jobs:
-  test-run:
+  test_run:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -34,7 +34,7 @@ jobs:
         
       - name: Run Tests
         run: yarn test
-  Buid-image:
+  build_and_push:
     needs: test-run
     name: Build Docker Image
     runs-on: ubuntu-latest
@@ -69,5 +69,29 @@ jobs:
         run: |
           docker image push eliezercastro/bit-fly.co:$DOCKER_IMAGE_VERSION
           docker image push eliezercastro/bit-fly.co:latest
+  deploy_to_droplet:
+    needs: build_and_push
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout 
+        uses: actions/checkout@v4
+
+      - name: Install SSH client
+        run: sudo apt-get install -y openssh-client
+
+      - name: SSH into Droplet, pull image, and run container
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.DROPLET_SSH_HOST }}
+          username: ${{ secrets.DROPLET_SSH_USERNAME }}
+          key: ${{ secrets.DROPLET_SSH_PRIVATE_KEY }}
+          port: ${{ secrets.DROPLET_SSH_PORT }}
+          script: |
+            docker pull eliezercastro/bit-fly.co
+            docker stop server || true
+            docker rm server || true
+            docker docker componse up -d
+
+    
     
 
