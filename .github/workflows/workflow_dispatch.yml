@@ -6,11 +6,11 @@ on:
 name: Workflow Dispatch 
 
 jobs:
-  Test:
+  test-run:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Setup Node.js
         uses: actions/setup-node@v3
@@ -34,3 +34,30 @@ jobs:
         
       - name: Run Tests
         run: yarn test
+  Buid-image:
+    needs: test-run
+    name: Build Docker Image
+    runs-on: ubuntu-latest
+    env:
+      DOCKER_IMAGE_VERSION: 1.2.0
+    if: ${{ success() }}
+    steps:
+      - name: 🚚 Get latest code
+        uses: actions/checkout@v4
+      - name: 🐳 Docker Login
+        uses: docker/login-action@v2
+        with:
+          username: ${{secrets.DOCKER_USER}}
+          password: ${{secrets.DOCKER_PASSWORD}}
+      - name: 🐳 Docker Build
+        run: |
+          docker image build --no-cache -t eliezercastro/bit-fly.co:$DOCKER_IMAGE_VERSION .
+      - name: 🐳 Docker tag version
+        run: |
+          docker tag eliezercastro/bit-fly.co:$DOCKER_IMAGE_VERSION eliezercastro/bit-fly.co:latest
+      - name: 🐳 Docker Push
+        run: |
+          docker image push kothehub/kothelog-front:$DOCKER_IMAGE_VERSION
+          docker image push kothehub/kothelog-front:latest
+    
+
