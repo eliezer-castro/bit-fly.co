@@ -12,6 +12,7 @@ import { clickAnalytics } from './controllers/click-analytics'
 import { verifyJTW } from './middleware/verify-jwt'
 import { refresh } from './controllers/refresh'
 import { updateProfile } from './controllers/update-profile'
+import { getUserProfile } from './controllers/get-user-profile'
 
 export async function appRoutes(app: FastifyInstance) {
   app.post(
@@ -345,5 +346,29 @@ export async function appRoutes(app: FastifyInstance) {
       },
     },
     updateProfile,
+  )
+
+  app.get(
+    '/v1/user/profile',
+    {
+      onRequest: [verifyJTW],
+      schema: {
+        tags: ['Users'],
+        security: [{ BearerAuth: [] }],
+        response: {
+          200: {
+            type: 'object',
+            properties: {
+              id: { type: 'string' },
+              name: { type: 'string' },
+              email: { type: 'string' },
+              password: { type: 'string' },
+              created_at: { type: 'string', format: 'date-time' },
+            },
+          },
+        },
+      },
+    },
+    getUserProfile,
   )
 }
