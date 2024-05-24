@@ -90,7 +90,7 @@ jobs:
             docker pull eliezercastro/bit-fly.co
             docker stop server || true
             docker rm server || true
-            docker docker componse up -d
+            docker compose up -d
 
     
     
