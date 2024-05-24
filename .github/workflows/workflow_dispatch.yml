@@ -1,0 +1,34 @@
+on:
+  push:
+    branches:
+      - main
+name: Workflow Dispatch 
+
+jobs:
+  build:
+    runs-on: ubuntu-20.x
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+
+      - name: Install Yarn
+        run: npm install -g yarn
+
+      - name: Install Dependencies
+        run: yarn install
+      
+      - name: Write the .env file 📝 
+        run: echo "GEMINI_API_KEY=${{ secrets.GEMINI_API_KEY }}" > .env
+        run: echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> .env
+        run: echo "POSTGRES_DB=${{ secrets.POSTGRES_DB }}" >> .env
+        run: echo "POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}" >> .env
+        run: echo "POSTGRES_USER=${{ secrets.POSTGRES_USER }}" >> .env
+        run: echo "DATABASE_URL=${{ secrets.DATABASE_URL }}" >> .env
+        
+      name: Run Tests
+        run: yarn test
