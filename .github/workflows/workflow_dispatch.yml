@@ -87,7 +87,7 @@ jobs:
           key: ${{ secrets.DROPLET_SSH_PRIVATE_KEY }}
           port: ${{ secrets.DROPLET_SSH_PORT }}
           script: |
-            docker pull eliezercastro/bit-fly.co
+            docker pull eliezercastro/bit-fly.co:latest
             docker stop server || true
             docker rm server || true
             docker compose up -d
