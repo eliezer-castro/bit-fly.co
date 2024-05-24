@@ -36,7 +36,7 @@ jobs:
       - name: Run Tests
         run: yarn test
   build_and_push:
-    needs: test_run
+    needs: run_tests
     name: Build Docker Image 🐳
     runs-on: ubuntu-latest
     env:
