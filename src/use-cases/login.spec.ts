@@ -4,7 +4,7 @@ import bcrypt from 'bcryptjs'
 import { InMemoryUserRepository } from '@/repositories/in-memory/in-memory-user-repository'
 import { LoginUseCase } from './login'
 import dotenv from 'dotenv'
-import { InvalidCredentialsErro } from './errors/invalid-credentials-erros'
+import { InvalidCredentials } from './errors/invalid-credentials-erros'
 
 dotenv.config()
 
@@ -48,6 +48,6 @@ describe('Login Use Case', () => {
         email: 'gdalastra@example.com',
         password: '123123',
       })
-    }).rejects.toThrowError(InvalidCredentialsErro)
+    }).rejects.toThrowError(InvalidCredentials)
   })
 })

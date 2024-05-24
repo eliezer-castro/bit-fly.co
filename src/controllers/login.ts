@@ -1,5 +1,5 @@
 import { UserRepositoryImpl } from '@/repositories/user-repository-impl'
-import { InvalidCredentialsErro } from '@/use-cases/errors/invalid-credentials-erros'
+import { InvalidCredentials } from '@/use-cases/errors/invalid-credentials-erros'
 import { LoginUseCase } from '@/use-cases/login'
 import { FastifyReply, FastifyRequest } from 'fastify'
 import { z } from 'zod'
@@ -48,7 +48,7 @@ export async function authenticate(
       .status(200)
       .send({ token })
   } catch (error) {
-    if (error instanceof InvalidCredentialsErro) {
+    if (error instanceof InvalidCredentials) {
       return reply.status(400).send({ message: error.message })
     }
     throw error

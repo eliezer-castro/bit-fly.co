@@ -1,6 +1,6 @@
 import { UserRepository } from '@/repositories/user-repository'
 import bcrypt from 'bcryptjs'
-import { InvalidCredentialsErro } from './errors/invalid-credentials-erros'
+import { InvalidCredentials } from './errors/invalid-credentials-erros'
 import { User } from '@/models/User'
 
 interface LoginUseCaseRequest {
@@ -23,13 +23,13 @@ export class LoginUseCase {
     const user = await this.userRepository.findByEmail(email)
 
     if (!user) {
-      throw new InvalidCredentialsErro()
+      throw new InvalidCredentials()
     }
 
     const doesPasswordMatches = bcrypt.compareSync(password, user.password)
 
     if (!doesPasswordMatches) {
-      throw new InvalidCredentialsErro()
+      throw new InvalidCredentials()
     }
 
     return {
