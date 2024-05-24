@@ -26,5 +26,4 @@ services:
       - pgdata:/var/lib/postgresql/data
 
 volumes:
-  pgdata:
-    name: bitfly_pgdata
+  pgdata: {}

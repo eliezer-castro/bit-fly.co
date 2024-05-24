@@ -6,21 +6,22 @@ on:
 name: Workflow Dispatch 
 
 jobs:
-  test_run:
+  run_tests:
     runs-on: ubuntu-latest
+    name: Run Tests 🧪
     steps:
-      - name: Checkout repository
+      - name: Checkout 🔄
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
+      - name: Setup Node.js 📦
         uses: actions/setup-node@v3
         with:
           node-version: '20'
 
-      - name: Install Yarn
+      - name: Install Yarn 🧶
         run: npm install -g yarn
 
-      - name: Install Dependencies
+      - name: Install Dependencies 📥
         run: yarn install
       
       - name: Write the .env file 📝 
@@ -36,13 +37,13 @@ jobs:
         run: yarn test
   build_and_push:
     needs: test_run
-    name: Build Docker Image
+    name: Build Docker Image 🐳
     runs-on: ubuntu-latest
     env:
       DOCKER_IMAGE_VERSION: 1.2.0
     if: ${{ success() }}
     steps:
-      - name: 🚚 Get latest code
+      - name: Checkout 🔄
         uses: actions/checkout@v4
       
       - name: Write the .env file 📝 
@@ -71,15 +72,16 @@ jobs:
           docker image push eliezercastro/bit-fly.co:latest
   deploy_to_droplet:
     needs: build_and_push
+    name: Deploy to Droplet 🚀
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout 
+      - name: Checkout 🔄
         uses: actions/checkout@v4
 
-      - name: Install SSH client
+      - name: Install SSH client 🔑
         run: sudo apt-get install -y openssh-client
 
-      - name: SSH into Droplet, pull image, and run container
+      - name: SSH into Droplet, pull image, and run container 🐳
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.DROPLET_SSH_HOST }}
@@ -89,7 +91,7 @@ jobs:
           script: |
             cd ..
             cd home
-            docker-compose pull
+            docker pull eliezercastro/bit-fly.co:latest
             docker-compose down
             docker-compose up -d
 
