@@ -18,7 +18,6 @@ export class DeleteUserUseCase {
     }
 
     const isPasswordValid = bcrypt.compareSync(password, user.password)
-    console.log(isPasswordValid)
 
     if (!isPasswordValid) {
       throw new InvalidCredentials()
