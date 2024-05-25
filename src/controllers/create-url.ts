@@ -15,12 +15,8 @@ export async function createUrl(request: FastifyRequest, reply: FastifyReply) {
   try {
     const { url, title, alias } = urlSchema.parse(request.body)
 
-    const userRepository = new UserRepositoryImpl()
     const shortenedUrlRepository = new ShortenedUrlRepositoryImpl()
-    const registerUseCase = new CreateShortUrlUseCase(
-      userRepository,
-      shortenedUrlRepository,
-    )
+    const registerUseCase = new CreateShortUrlUseCase(shortenedUrlRepository)
 
     const data = await registerUseCase.execute({
       url,
