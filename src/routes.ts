@@ -13,6 +13,7 @@ import { verifyJTW } from './middleware/verify-jwt'
 import { refresh } from './controllers/refresh'
 import { updateProfile } from './controllers/update-profile'
 import { getUserProfile } from './controllers/get-user-profile'
+import { deleteUser } from './controllers/delete-user'
 
 export async function appRoutes(app: FastifyInstance) {
   app.post(
@@ -370,5 +371,32 @@ export async function appRoutes(app: FastifyInstance) {
       },
     },
     getUserProfile,
+  )
+
+  app.delete(
+    '/v1/user',
+    {
+      onRequest: [verifyJTW],
+      schema: {
+        tags: ['Users'],
+        security: [{ BearerAuth: [] }],
+        body: {
+          type: 'object',
+          properties: {
+            password: { type: 'string' },
+          },
+          required: ['password'],
+        },
+        response: {
+          200: {
+            type: 'object',
+            properties: {
+              message: { type: 'string' },
+            },
+          },
+        },
+      },
+    },
+    deleteUser,
   )
 }
