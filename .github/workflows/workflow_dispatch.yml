@@ -45,10 +45,9 @@ jobs:
     needs: run_tests
     name: Build Docker Image 🐳
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'
+    if: github.ref == 'refs/heads/main' && success()
     env:
       DOCKER_IMAGE_VERSION: 1.2.0
-    if: ${{ success() }}
     steps:
       - name: Checkout 🔄
         uses: actions/checkout@v4
