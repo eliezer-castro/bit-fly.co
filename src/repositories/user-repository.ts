@@ -10,4 +10,6 @@ export interface UserRepository {
     email?: string,
     password?: string,
   ): Promise<User | null>
+
+  deleteUser(userId: string): Promise<void>
 }

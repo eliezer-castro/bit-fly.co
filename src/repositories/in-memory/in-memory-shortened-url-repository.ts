@@ -66,4 +66,8 @@ export class InMemoryShortenedUrlRepository implements ShortenedUrlRepository {
       ) || null
     )
   }
+
+  async deleteManyUrlsByUserId(userId: string): Promise<void> {
+    this.urls = this.urls.filter((url) => url.user_id !== userId)
+  }
 }

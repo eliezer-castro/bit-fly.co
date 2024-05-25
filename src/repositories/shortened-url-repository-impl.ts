@@ -104,6 +104,12 @@ export class ShortenedUrlRepositoryImpl implements ShortenedUrlRepository {
     })
   }
 
+  async deleteManyUrlsByUserId(userId: string): Promise<void> {
+    await this.prisma.shortenedUrl.deleteMany({
+      where: { user_id: userId },
+    })
+  }
+
   private prisma: PrismaClient
   constructor() {
     this.prisma = new PrismaClient()
