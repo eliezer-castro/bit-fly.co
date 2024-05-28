@@ -5,6 +5,7 @@ import { InvalidEmail } from './errors/invalid-email'
 import { EmailAlreadyExists } from './errors/email-already-exists'
 import { UserNotExists } from './errors/user-not-exists'
 import { InvalidPassword } from './errors/invalid-password'
+import { MissingFields } from './errors/missing-fields'
 
 let userRepository: InMemoryUserRepository
 let sut: UpdateUserProfileUseCase
@@ -15,7 +16,7 @@ describe('Update User Profile Use Case', () => {
     sut = new UpdateUserProfileUseCase(userRepository)
   })
 
-  it('should be able to update a user profile', async () => {
+  it('should be able to update both name and email', async () => {
     await userRepository.createUser({
       id: 'user-id',
       name: 'John Doe',
@@ -24,13 +25,14 @@ describe('Update User Profile Use Case', () => {
       created_at: new Date(),
     })
 
-    const { name } = await sut.execute({
+    const { name, email } = await sut.execute({
       userId: 'user-id',
       name: 'Jane Doe',
       email: 'jane-doe@mail.com',
     })
 
     expect(name).toEqual('Jane Doe')
+    expect(email).toEqual('jane-doe@mail.com')
   })
 
   it('should not be able to update a user profile with invalid email', async () => {
@@ -85,7 +87,6 @@ describe('Update User Profile Use Case', () => {
     }).rejects.toThrow(UserNotExists)
   })
 
-  // invalid password
   it('should not be able to update a user profile with invalid password', async () => {
     await userRepository.createUser({
       id: '1',
@@ -102,5 +103,55 @@ describe('Update User Profile Use Case', () => {
         password: 'new-password',
       })
     }).rejects.toThrow(InvalidPassword)
+  })
+
+  it('should be able to update both name and email', async () => {
+    await userRepository.createUser({
+      id: 'user-id',
+      name: 'John Doe',
+      email: 'john-doe@mail.com',
+      password: 'password',
+      created_at: new Date(),
+    })
+
+    const { email } = await sut.execute({
+      userId: 'user-id',
+      name: 'Jane Doe',
+    })
+
+    expect(email).toEqual('john-doe@mail.com')
+  })
+
+  it('should not update name if no new name is provided', async () => {
+    await userRepository.createUser({
+      id: 'user-id',
+      name: 'John Doe',
+      email: 'john-doe@mail.com',
+      password: 'password',
+      created_at: new Date(),
+    })
+
+    const { name } = await sut.execute({
+      userId: 'user-id',
+      email: 'jane-doe@mail.com',
+    })
+
+    expect(name).toEqual('John Doe')
+  })
+
+  it('should not update any field if no update data is provided', async () => {
+    await userRepository.createUser({
+      id: 'user-id',
+      name: 'John Doe',
+      email: 'john-doe@mail.com',
+      password: 'password',
+      created_at: new Date(),
+    })
+
+    expect(async () => {
+      await sut.execute({
+        userId: 'user-id',
+      })
+    }).rejects.toThrow(MissingFields)
   })
 })
