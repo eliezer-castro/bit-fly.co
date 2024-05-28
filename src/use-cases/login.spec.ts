@@ -2,19 +2,19 @@
 import { expect, describe, it, beforeEach } from 'vitest'
 import bcrypt from 'bcryptjs'
 import { InMemoryUserRepository } from '@/repositories/in-memory/in-memory-user-repository'
-import { LoginUseCase } from './login'
+import { AuthUseCase } from './auth-use-case'
 import dotenv from 'dotenv'
 import { InvalidCredentials } from './errors/invalid-credentials-erros'
 
 dotenv.config()
 
 let userRepository: InMemoryUserRepository
-let sut: LoginUseCase
+let sut: AuthUseCase
 
 describe('Login Use Case', () => {
   beforeEach(() => {
     userRepository = new InMemoryUserRepository()
-    sut = new LoginUseCase(userRepository)
+    sut = new AuthUseCase(userRepository)
   })
 
   it('should be able to login', async () => {

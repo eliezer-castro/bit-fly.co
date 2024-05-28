@@ -14,6 +14,7 @@ model User {
   password     String
   created_at   DateTime       @default(now())
   shortenedUrl ShortenedUrl[]
+  Tokens       Token[]
 
   @@map("users")
 }
@@ -31,4 +32,15 @@ model ShortenedUrl {
   user_id    String
 
   @@map("shortened_urls")
+}
+
+model Token {
+  id         String   @id @default(uuid())
+  token      String
+  user       User     @relation(fields: [user_id], references: [id])
+  user_id    String
+  created_at DateTime @default(now())
+  expires_at DateTime
+
+  @@map("tokens")
 }

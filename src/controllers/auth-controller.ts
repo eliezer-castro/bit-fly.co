@@ -1,10 +1,12 @@
+import { TokenRepositoryImpl } from '@/repositories/token-repository-imp'
 import { UserRepositoryImpl } from '@/repositories/user-repository-impl'
 import { InvalidCredentials } from '@/use-cases/errors/invalid-credentials-erros'
-import { LoginUseCase } from '@/use-cases/login'
+import { AuthUseCase } from '@/use-cases/auth-use-case'
+import { CreateTokenUseCase } from '@/use-cases/create-token-use-case'
 import { FastifyReply, FastifyRequest } from 'fastify'
 import { z } from 'zod'
 
-export async function authenticate(
+export async function authController(
   request: FastifyRequest,
   reply: FastifyReply,
 ) {
@@ -17,26 +19,37 @@ export async function authenticate(
 
   try {
     const userRepository = new UserRepositoryImpl()
-    const loginUseCase = new LoginUseCase(userRepository)
-    const session = await loginUseCase.execute({ email, password })
+    const tokenRepository = new TokenRepositoryImpl()
+    const tokenUseCase = new CreateTokenUseCase(tokenRepository)
+    const authUseCase = new AuthUseCase(userRepository)
 
-    const token = await reply.jwtSign(
-      {},
+    const { user } = await authUseCase.execute({ email, password })
+
+    const accessToken = await reply.jwtSign(
+      { userId: user.id },
       {
         sign: {
-          sub: session.user.id,
+          sub: user.id,
+          expiresIn: '10m',
         },
       },
     )
+
     const refreshToken = await reply.jwtSign(
-      {},
+      { userId: user.id },
       {
         sign: {
-          sub: session.user.id,
+          sub: user.id,
           expiresIn: '7d',
         },
       },
     )
+
+    await tokenUseCase.execute({
+      token: refreshToken,
+      user_id: user.id,
+      expires_at: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+    })
 
     return reply
       .setCookie('refreshToken', refreshToken, {
@@ -46,7 +59,7 @@ export async function authenticate(
         httpOnly: true,
       })
       .status(200)
-      .send({ token })
+      .send({ message: accessToken })
   } catch (error) {
     if (error instanceof InvalidCredentials) {
       return reply.status(400).send({ message: error.message })

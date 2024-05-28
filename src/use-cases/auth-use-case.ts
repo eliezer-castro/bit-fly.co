@@ -12,8 +12,8 @@ interface LoginUseCaseResponse {
   user: User
 }
 
-export class LoginUseCase {
-  // eslint-disable-next-line
+export class AuthUseCase {
+  // eslint-disable-next-line prettier/prettier
   constructor(private userRepository: UserRepository) { }
 
   async execute({
