@@ -1,7 +1,7 @@
 import { FastifyInstance } from 'fastify'
 import { generateSuggestion } from './controllers/generate-suggestion'
 import { registerUser } from './controllers/register'
-import { authenticate } from './controllers/login'
+import { authController } from './controllers/auth-controller'
 import { createUrl } from './controllers/create-url'
 import { updateUrl } from './controllers/update-url'
 import { redirect } from './controllers/redirect'
@@ -10,10 +10,11 @@ import { getUrl } from './controllers/get-url'
 import { deleteUrl } from './controllers/delete-url'
 import { clickAnalytics } from './controllers/click-analytics'
 import { verifyJTW } from './middleware/verify-jwt'
-import { refresh } from './controllers/refresh'
+import { refreshTokenController } from './controllers/refresh-token-controller'
 import { updateProfile } from './controllers/update-profile'
 import { getUserProfile } from './controllers/get-user-profile'
 import { deleteUser } from './controllers/delete-user'
+import { logoutController } from './controllers/logout-controller'
 
 export async function appRoutes(app: FastifyInstance) {
   app.post(
@@ -292,13 +293,32 @@ export async function appRoutes(app: FastifyInstance) {
           200: {
             type: 'object',
             properties: {
-              token: { type: 'string' },
+              message: { type: 'string' },
             },
           },
         },
       },
     },
-    authenticate,
+    authController,
+  )
+
+  app.post(
+    '/v1/logout',
+    {
+      onRequest: [verifyJTW],
+      schema: {
+        tags: ['Authentication'],
+        response: {
+          200: {
+            type: 'object',
+            properties: {
+              message: { type: 'string' },
+            },
+          },
+        },
+      },
+    },
+    logoutController,
   )
 
   app.patch(
@@ -308,7 +328,7 @@ export async function appRoutes(app: FastifyInstance) {
         tags: ['Authentication'],
       },
     },
-    refresh,
+    refreshTokenController,
   )
 
   app.put(
