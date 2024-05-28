@@ -5,6 +5,7 @@ import { AuthUseCase } from '@/use-cases/auth-use-case'
 import { CreateTokenUseCase } from '@/use-cases/create-token-use-case'
 import { FastifyReply, FastifyRequest } from 'fastify'
 import { z } from 'zod'
+import { generateTokens } from '@/services/generate-tokens'
 
 export async function authController(
   request: FastifyRequest,
@@ -25,25 +26,7 @@ export async function authController(
 
     const { user } = await authUseCase.execute({ email, password })
 
-    const accessToken = await reply.jwtSign(
-      { userId: user.id },
-      {
-        sign: {
-          sub: user.id,
-          expiresIn: '10m',
-        },
-      },
-    )
-
-    const refreshToken = await reply.jwtSign(
-      { userId: user.id },
-      {
-        sign: {
-          sub: user.id,
-          expiresIn: '7d',
-        },
-      },
-    )
+    const { accessToken, refreshToken } = await generateTokens(user.id, reply)
 
     await tokenUseCase.execute({
       token: refreshToken,

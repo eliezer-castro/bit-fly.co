@@ -1,4 +1,5 @@
 import { TokenRepositoryImpl } from '@/repositories/token-repository-imp'
+import { generateTokens } from '@/services/generate-tokens'
 import { InvalidRefreshToken } from '@/use-cases/errors/invalid-refresh-token'
 import { RefreshTokenUseCase } from '@/use-cases/refresh-token-use-case'
 import { FastifyReply, FastifyRequest } from 'fastify'
@@ -24,39 +25,22 @@ export async function refreshTokenController(
     })
     const userId = decoded.userId
 
-    const newAccessToken = await reply.jwtSign(
-      { userId },
-      {
-        sign: {
-          sub: userId,
-          expiresIn: '10m',
-        },
-      },
-    )
-    const newRefreshToken = await reply.jwtSign(
-      { userId },
-      {
-        sign: {
-          sub: userId,
-          expiresIn: '7d',
-        },
-      },
-    )
+    const { accessToken, refreshToken } = await generateTokens(userId, reply)
 
     await refreshTokenUseCase.execute({
       oldToken: oldRefreshToken,
-      refreshToken: newRefreshToken,
+      refreshToken,
     })
 
     return reply
-      .setCookie('refreshToken', newRefreshToken, {
+      .setCookie('refreshToken', refreshToken, {
         path: '/',
         secure: true,
         sameSite: true,
         httpOnly: true,
       })
       .status(200)
-      .send({ accessToken: newAccessToken })
+      .send({ accessToken })
   } catch (error) {
     if (error instanceof InvalidRefreshToken) {
       return reply.status(404).send({ message: error.message })
