@@ -1,7 +1,7 @@
 import bcrypt from 'bcryptjs'
 import { nanoid } from 'nanoid'
 import { User } from '../models/User'
-import { UserAlreadyExists } from './errors/user-already-exists'
+import { UserAlreadyExists } from './errors/user-already-exists-error'
 import { UserRepository } from '@/repositories/user-repository'
 
 interface RegisterUseCaseInterface {

@@ -1,7 +1,7 @@
 import { ShortenedUrlRepositoryImpl } from '@/repositories/shortened-url-repository-impl'
-import { ClickAnalyticsUseCase } from '@/use-cases/click-analytics'
-import { Unauthorized } from '@/use-cases/errors/unauthorized'
-import { UrlNotExists } from '@/use-cases/errors/url-not-exists'
+import { ClickAnalyticsUseCase } from '@/use-cases/click-analytics-use-case'
+import { Unauthorized } from '@/use-cases/errors/unauthorized-error'
+import { UrlNotExists } from '@/use-cases/errors/url-not-exists-error'
 import { FastifyReply, FastifyRequest } from 'fastify'
 import { z } from 'zod'
 

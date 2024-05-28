@@ -1,8 +1,8 @@
 import { ShortenedUrlRepositoryImpl } from '@/repositories/shortened-url-repository-impl'
 import { UserRepositoryImpl } from '@/repositories/user-repository-impl'
-import { DeleteUrlUseCase } from '@/use-cases/delete-url'
-import { Unauthorized } from '@/use-cases/errors/unauthorized'
-import { UrlNotExists } from '@/use-cases/errors/url-not-exists'
+import { DeleteUrlUseCase } from '@/use-cases/delete-url-use-case'
+import { Unauthorized } from '@/use-cases/errors/unauthorized-error'
+import { UrlNotExists } from '@/use-cases/errors/url-not-exists-error'
 import { FastifyReply, FastifyRequest } from 'fastify'
 import { z } from 'zod'
 

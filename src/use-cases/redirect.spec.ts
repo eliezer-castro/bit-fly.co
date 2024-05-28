@@ -1,7 +1,7 @@
 import { expect, describe, it, beforeEach } from 'vitest'
-import { RedirectCaseUse } from './redirect'
+import { RedirectCaseUse } from './redirect-use-case'
 import { InMemoryShortenedUrlRepository } from '@/repositories/in-memory/in-memory-shortened-url-repository'
-import { InvalidUrl } from './errors/invalid-url'
+import { InvalidUrl } from './errors/invalid-url-error'
 
 let shortenedUrlRepository: InMemoryShortenedUrlRepository
 let sut: RedirectCaseUse

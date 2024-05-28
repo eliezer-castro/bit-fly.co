@@ -1,10 +1,10 @@
 import bcrypt from 'bcryptjs'
 import { InMemoryUserRepository } from '@/repositories/in-memory/in-memory-user-repository'
-import { DeleteUserUseCase } from './delete-user'
+import { DeleteUserUseCase } from './delete-user-use-case'
 import { expect, describe, it, beforeEach } from 'vitest'
-import { UserNotExists } from './errors/user-not-exists'
+import { UserNotExists } from './errors/user-not-exists-error'
 import { InMemoryShortenedUrlRepository } from '@/repositories/in-memory/in-memory-shortened-url-repository'
-import { InvalidCredentials } from './errors/invalid-credentials-erros'
+import { InvalidCredentials } from './errors/invalid-credentials-error'
 
 let userRepository: InMemoryUserRepository
 let shortenedUrlRepository: InMemoryShortenedUrlRepository

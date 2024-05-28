@@ -1,6 +1,6 @@
 import { ShortenedUrlRepositoryImpl } from '@/repositories/shortened-url-repository-impl'
-import { UrlNotExists } from '@/use-cases/errors/url-not-exists'
-import { GetUrlUseCase } from '@/use-cases/get-url'
+import { UrlNotExists } from '@/use-cases/errors/url-not-exists-error'
+import { GetUrlUseCase } from '@/use-cases/get-url-use-case'
 import { FastifyReply, FastifyRequest } from 'fastify'
 import { z } from 'zod'
 

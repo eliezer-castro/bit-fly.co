@@ -1,6 +1,6 @@
 import { UserRepositoryImpl } from '@/repositories/user-repository-impl'
-import { UserAlreadyExists } from '@/use-cases/errors/user-already-exists'
-import { RegisterUseCase } from '@/use-cases/register'
+import { UserAlreadyExists } from '@/use-cases/errors/user-already-exists-error'
+import { RegisterUseCase } from '@/use-cases/register-use-case'
 import { FastifyReply, FastifyRequest } from 'fastify'
 import { z } from 'zod'
 

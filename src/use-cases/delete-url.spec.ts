@@ -1,9 +1,9 @@
 import { InMemoryShortenedUrlRepository } from '@/repositories/in-memory/in-memory-shortened-url-repository'
 import { InMemoryUserRepository } from '@/repositories/in-memory/in-memory-user-repository'
 import { describe, it, expect, beforeEach } from 'vitest'
-import { DeleteUrlUseCase } from './delete-url'
-import { Unauthorized } from './errors/unauthorized'
-import { UrlNotExists } from './errors/url-not-exists'
+import { DeleteUrlUseCase } from './delete-url-use-case'
+import { Unauthorized } from './errors/unauthorized-error'
+import { UrlNotExists } from './errors/url-not-exists-error'
 
 let shortnedUrlRepository: InMemoryShortenedUrlRepository
 let userRepository: InMemoryUserRepository

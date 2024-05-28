@@ -1,11 +1,11 @@
 import { InMemoryUserRepository } from '@/repositories/in-memory/in-memory-user-repository'
 import { describe, expect, it, beforeEach } from 'vitest'
-import { UpdateUserProfileUseCase } from './update-profile'
-import { InvalidEmail } from './errors/invalid-email'
-import { EmailAlreadyExists } from './errors/email-already-exists'
-import { UserNotExists } from './errors/user-not-exists'
-import { InvalidPassword } from './errors/invalid-password'
-import { MissingFields } from './errors/missing-fields'
+import { UpdateUserProfileUseCase } from './update-profile-use-case'
+import { InvalidEmail } from './errors/invalid-email-error'
+import { EmailAlreadyExists } from './errors/email-already-exists-error'
+import { UserNotExists } from './errors/user-not-exists-error'
+import { InvalidPassword } from './errors/invalid-password-error'
+import { MissingFields } from './errors/missing-fields-error'
 
 let userRepository: InMemoryUserRepository
 let sut: UpdateUserProfileUseCase

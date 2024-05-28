@@ -1,7 +1,7 @@
 import { ShortenedUrl } from '@/models/ShortenedUrl'
 import { ShortenedUrlRepository } from '@/repositories/shortened-url-repository'
 import { nanoid } from 'nanoid'
-import { AliasAlreadyExists } from './errors/alias-already-exists'
+import { AliasAlreadyExists } from './errors/alias-already-exists-error'
 import { UniqueShortenedURLGenerator } from '@/services/generateUniqueShortenedURL'
 
 export interface CreateShortUrl {

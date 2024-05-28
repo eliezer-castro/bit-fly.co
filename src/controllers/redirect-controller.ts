@@ -1,6 +1,6 @@
 import { ShortenedUrlRepositoryImpl } from '@/repositories/shortened-url-repository-impl'
-import { InvalidUrl } from '@/use-cases/errors/invalid-url'
-import { RedirectCaseUse } from '@/use-cases/redirect'
+import { InvalidUrl } from '@/use-cases/errors/invalid-url-error'
+import { RedirectCaseUse } from '@/use-cases/redirect-use-case'
 import { FastifyReply, FastifyRequest } from 'fastify'
 import { z } from 'zod'
 

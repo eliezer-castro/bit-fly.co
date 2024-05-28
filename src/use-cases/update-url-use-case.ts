@@ -1,9 +1,9 @@
 import { ShortenedUrl } from '@/models/ShortenedUrl'
 import { ShortenedUrlRepository } from '@/repositories/shortened-url-repository'
-import { MissingFields } from './errors/missing-fields'
-import { UrlNotExists } from './errors/url-not-exists'
+import { MissingFields } from './errors/missing-fields-error'
+import { UrlNotExists } from './errors/url-not-exists-error'
 import { generateSlugFromUrl } from '@/services/generate-slug'
-import { AliasAlreadyExists } from './errors/alias-already-exists'
+import { AliasAlreadyExists } from './errors/alias-already-exists-error'
 
 export interface UpdateShortUrl {
   urlId: string

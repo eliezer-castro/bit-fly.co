@@ -1,8 +1,8 @@
 import { ShortenedUrlRepositoryImpl } from '@/repositories/shortened-url-repository-impl'
-import { AliasAlreadyExists } from '@/use-cases/errors/alias-already-exists'
-import { MissingFields } from '@/use-cases/errors/missing-fields'
-import { UrlNotExists } from '@/use-cases/errors/url-not-exists'
-import { UpdateShortUrlCaseUse } from '@/use-cases/update-url'
+import { AliasAlreadyExists } from '@/use-cases/errors/alias-already-exists-error'
+import { MissingFields } from '@/use-cases/errors/missing-fields-error'
+import { UrlNotExists } from '@/use-cases/errors/url-not-exists-error'
+import { UpdateShortUrlCaseUse } from '@/use-cases/update-url-use-case'
 import { FastifyReply, FastifyRequest } from 'fastify'
 import { z } from 'zod'
 

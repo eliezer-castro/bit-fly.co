@@ -1,6 +1,6 @@
 import { ShortenedUrlRepositoryImpl } from '@/repositories/shortened-url-repository-impl'
-import { CreateShortUrlUseCase } from '@/use-cases/create-url'
-import { AliasAlreadyExists } from '@/use-cases/errors/alias-already-exists'
+import { CreateShortUrlUseCase } from '@/use-cases/create-url-use-case'
+import { AliasAlreadyExists } from '@/use-cases/errors/alias-already-exists-error'
 import { FastifyReply, FastifyRequest } from 'fastify'
 import { z } from 'zod'
 

@@ -1,5 +1,5 @@
 import { ShortenedUrlRepositoryImpl } from '@/repositories/shortened-url-repository-impl'
-import { GetAllUrlsUseCase } from '@/use-cases/get-all-urls'
+import { GetAllUrlsUseCase } from '@/use-cases/get-all-urls-use-case'
 import { FastifyReply, FastifyRequest } from 'fastify'
 import { z } from 'zod'
 

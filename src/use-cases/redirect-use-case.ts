@@ -1,5 +1,5 @@
 import { ShortenedUrlRepository } from '@/repositories/shortened-url-repository'
-import { InvalidUrl } from './errors/invalid-url'
+import { InvalidUrl } from './errors/invalid-url-error'
 
 export class RedirectCaseUse {
   constructor(

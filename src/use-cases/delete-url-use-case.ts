@@ -1,7 +1,7 @@
 import { ShortenedUrlRepository } from '@/repositories/shortened-url-repository'
 import { UserRepository } from '@/repositories/user-repository'
-import { UrlNotExists } from './errors/url-not-exists'
-import { Unauthorized } from './errors/unauthorized'
+import { UrlNotExists } from './errors/url-not-exists-error'
+import { Unauthorized } from './errors/unauthorized-error'
 
 export class DeleteUrlUseCase {
   // eslint-disable-next-line prettier/prettier

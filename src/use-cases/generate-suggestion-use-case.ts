@@ -1,7 +1,7 @@
 import { ShortenedUrlRepository } from '@/repositories/shortened-url-repository'
 import { UserRepository } from '@/repositories/user-repository'
 import { generateSuggestionPrompts } from '@/services/suggestionService'
-import { Unauthorized } from './errors/unauthorized'
+import { Unauthorized } from './errors/unauthorized-error'
 
 export class GenerateSuggestion {
   // eslint-disable-next-line prettier/prettier

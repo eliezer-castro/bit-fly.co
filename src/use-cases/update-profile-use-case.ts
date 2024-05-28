@@ -1,10 +1,10 @@
 import { UserRepository } from '@/repositories/user-repository'
-import { MissingFields } from './errors/missing-fields'
-import { UserNotExists } from './errors/user-not-exists'
-import { EmailAlreadyExists } from './errors/email-already-exists' // Nova importação
+import { MissingFields } from './errors/missing-fields-error'
+import { UserNotExists } from './errors/user-not-exists-error'
+import { EmailAlreadyExists } from './errors/email-already-exists-error' // Nova importação
 import bcrypt from 'bcryptjs'
-import { InvalidEmail } from './errors/invalid-email'
-import { InvalidPassword } from './errors/invalid-password'
+import { InvalidEmail } from './errors/invalid-email-error'
+import { InvalidPassword } from './errors/invalid-password-error'
 
 export interface UpdateUserProfile {
   userId: string

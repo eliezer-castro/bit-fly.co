@@ -1,5 +1,5 @@
 import { User } from '@/models/User'
-import { UserNotExists } from './errors/user-not-exists'
+import { UserNotExists } from './errors/user-not-exists-error'
 import { UserRepository } from '@/repositories/user-repository'
 
 export class GetUserProfileUseCase {

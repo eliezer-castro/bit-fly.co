@@ -1,6 +1,6 @@
 import { FastifyReply, FastifyRequest } from 'fastify'
-import { GetUserProfileUseCase } from '@/use-cases/get-user-profile'
-import { UserNotExists } from '@/use-cases/errors/user-not-exists'
+import { GetUserProfileUseCase } from '@/use-cases/get-user-profile-use-case'
+import { UserNotExists } from '@/use-cases/errors/user-not-exists-error'
 import { UserRepositoryImpl } from '@/repositories/user-repository-impl'
 
 export async function getUserProfile(

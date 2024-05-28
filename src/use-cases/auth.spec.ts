@@ -4,7 +4,7 @@ import bcrypt from 'bcryptjs'
 import { InMemoryUserRepository } from '@/repositories/in-memory/in-memory-user-repository'
 import { AuthUseCase } from './auth-use-case'
 import dotenv from 'dotenv'
-import { InvalidCredentials } from './errors/invalid-credentials-erros'
+import { InvalidCredentials } from './errors/invalid-credentials-error'
 
 dotenv.config()
 

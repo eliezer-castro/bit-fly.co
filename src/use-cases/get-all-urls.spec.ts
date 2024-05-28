@@ -1,5 +1,5 @@
 import { expect, describe, it, beforeEach } from 'vitest'
-import { GetAllUrlsUseCase } from './get-all-urls'
+import { GetAllUrlsUseCase } from './get-all-urls-use-case'
 import { InMemoryShortenedUrlRepository } from '@/repositories/in-memory/in-memory-shortened-url-repository'
 import { ShortenedUrl } from '@/models/ShortenedUrl'
 

@@ -1,6 +1,6 @@
 import { ClickAnalytics } from '@/models/click-analytics'
 import { ShortenedUrlRepository } from '@/repositories/shortened-url-repository'
-import { UrlNotExists } from './errors/url-not-exists'
+import { UrlNotExists } from './errors/url-not-exists-error'
 
 export class ClickAnalyticsUseCase {
   // eslint-disable-next-line prettier/prettier

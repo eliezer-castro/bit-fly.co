@@ -1,6 +1,6 @@
 import { TokenRepositoryImpl } from '@/repositories/token-repository-imp'
 import { UserRepositoryImpl } from '@/repositories/user-repository-impl'
-import { InvalidCredentials } from '@/use-cases/errors/invalid-credentials-erros'
+import { InvalidCredentials } from '@/use-cases/errors/invalid-credentials-error'
 import { AuthUseCase } from '@/use-cases/auth-use-case'
 import { CreateTokenUseCase } from '@/use-cases/create-token-use-case'
 import { FastifyReply, FastifyRequest } from 'fastify'

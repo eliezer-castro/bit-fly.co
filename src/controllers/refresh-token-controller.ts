@@ -1,6 +1,6 @@
 import { TokenRepositoryImpl } from '@/repositories/token-repository-imp'
 import { generateTokens } from '@/services/generate-tokens'
-import { InvalidRefreshToken } from '@/use-cases/errors/invalid-refresh-token'
+import { InvalidRefreshToken } from '@/use-cases/errors/invalid-refresh-token-error'
 import { RefreshTokenUseCase } from '@/use-cases/refresh-token-use-case'
 import { FastifyReply, FastifyRequest } from 'fastify'
 

@@ -1,6 +1,6 @@
 import { UserRepository } from '@/repositories/user-repository'
 import bcrypt from 'bcryptjs'
-import { InvalidCredentials } from './errors/invalid-credentials-erros'
+import { InvalidCredentials } from './errors/invalid-credentials-error'
 import { User } from '@/models/User'
 
 interface LoginUseCaseRequest {

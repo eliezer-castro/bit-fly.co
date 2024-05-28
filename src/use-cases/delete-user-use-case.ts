@@ -1,7 +1,7 @@
 import bcrypt from 'bcryptjs'
 import { UserRepository } from '@/repositories/user-repository'
-import { UserNotExists } from './errors/user-not-exists'
-import { InvalidCredentials } from './errors/invalid-credentials-erros'
+import { UserNotExists } from './errors/user-not-exists-error'
+import { InvalidCredentials } from './errors/invalid-credentials-error'
 import { ShortenedUrlRepository } from '@/repositories/shortened-url-repository'
 
 export class DeleteUserUseCase {

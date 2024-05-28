@@ -2,7 +2,7 @@ import { InMemoryTokenRepository } from '@/repositories/in-memory/in-memory-toke
 import { expect, describe, it, beforeEach } from 'vitest'
 import { RefreshTokenUseCase } from './refresh-token-use-case'
 import { Token } from '@/models/token'
-import { InvalidRefreshToken } from './errors/invalid-refresh-token'
+import { InvalidRefreshToken } from './errors/invalid-refresh-token-error'
 
 let tokenRepository: InMemoryTokenRepository
 

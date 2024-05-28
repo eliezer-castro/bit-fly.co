@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { expect, describe, it, beforeEach } from 'vitest'
-import { RegisterUseCase } from './register'
+import { RegisterUseCase } from './register-use-case'
 import { compare } from 'bcryptjs'
 import { InMemoryUserRepository } from '@/repositories/in-memory/in-memory-user-repository'
-import { UserAlreadyExists } from './errors/user-already-exists'
+import { UserAlreadyExists } from './errors/user-already-exists-error'
 
 let userRepository: InMemoryUserRepository
 let sut: RegisterUseCase

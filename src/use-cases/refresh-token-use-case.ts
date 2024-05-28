@@ -1,5 +1,5 @@
 import { TokenRepository } from '@/repositories/token-repository'
-import { InvalidRefreshToken } from './errors/invalid-refresh-token'
+import { InvalidRefreshToken } from './errors/invalid-refresh-token-error'
 import { nanoid } from 'nanoid'
 
 interface RefreshTokenUseCaseRequest {

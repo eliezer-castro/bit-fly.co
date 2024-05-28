@@ -2,7 +2,7 @@ import { FastifyRequest, FastifyReply } from 'fastify'
 import { z } from 'zod'
 import { UserRepositoryImpl } from '@/repositories/user-repository-impl'
 import { ShortenedUrlRepositoryImpl } from '@/repositories/shortened-url-repository-impl'
-import { GenerateSuggestion } from '@/use-cases/generate-suggestion'
+import { GenerateSuggestion } from '@/use-cases/generate-suggestion-use-case'
 
 export async function generateSuggestion(
   request: FastifyRequest,

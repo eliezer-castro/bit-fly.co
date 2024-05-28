@@ -1,6 +1,6 @@
 import { ShortenedUrl } from '@/models/ShortenedUrl'
 import { ShortenedUrlRepository } from '@/repositories/shortened-url-repository'
-import { UrlNotExists } from './errors/url-not-exists'
+import { UrlNotExists } from './errors/url-not-exists-error'
 
 export class GetUrlUseCase {
   // eslint-disable-next-line prettier/prettier

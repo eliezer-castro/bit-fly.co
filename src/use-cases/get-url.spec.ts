@@ -1,7 +1,7 @@
 import { expect, describe, it, beforeEach } from 'vitest'
-import { GetUrlUseCase } from './get-url'
+import { GetUrlUseCase } from './get-url-use-case'
 import { InMemoryShortenedUrlRepository } from '@/repositories/in-memory/in-memory-shortened-url-repository'
-import { UrlNotExists } from './errors/url-not-exists'
+import { UrlNotExists } from './errors/url-not-exists-error'
 import { ShortenedUrl } from '@/models/ShortenedUrl'
 
 let shortenedUrlRepository: InMemoryShortenedUrlRepository
