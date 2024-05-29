@@ -4,10 +4,11 @@ services:
   nginx:
     image: nginx:latest
     container_name: bitfly_nginx
+    restart: always
     ports:
       - "80:80"
     volumes:
-      - ./nginx.conf:/etc/nginx/conf.d/default.conf
+      - ./nginx.conf:/etc/nginx/nginx.conf
     depends_on:
       - api
 
