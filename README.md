@@ -25,13 +25,9 @@ O Bit-Fly é um projeto que oferece uma API RESTful para encurtar URLs. Ele foi 
 
 **Gerenciamento de Perfil:**
 
-* **Atualização:** 
-    * Altere seu nome e email.
-    * Atualize sua senha.
-* **Visualização:** 
-    * Acesse seus dados de perfil, incluindo nome, email e data de criação da conta.
-* **Exclusão:** 
-    * Exclua sua conta permanentemente (com confirmação).
+* **Atualização:**  Altere seu nome, email e atualize sua senha.
+* **Visualização:** Acesse seus dados de perfil, incluindo nome, email e data de criação da conta.
+* **Exclusão:** Exclua sua conta permanentemente (com confirmação).
 
 **Casos de uso:**
 
