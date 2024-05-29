@@ -16,6 +16,8 @@ services:
     container_name: bitfly_api
     image: eliezercastro/bit-fly.co:latest
     restart: always
+    ports:
+      - "3000:3000"
     env_file:
       - .env
     depends_on:

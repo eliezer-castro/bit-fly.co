@@ -22,7 +22,7 @@ COPY --from=builder /app/build ./build
 COPY --from=builder /app/prisma ./prisma
 COPY --from=builder /app/.env ./
 
-EXPOSE 3333
+EXPOSE 3000
 
 CMD ["npm", "run", "start:migrate:prod"]
 
