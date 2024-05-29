@@ -14,7 +14,7 @@ jobs:
   run_tests:
     name: Run Tests 🧪
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/develop'
+    if: github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/main'
     steps:
       - name: Checkout 🔄
         uses: actions/checkout@v4
@@ -41,11 +41,12 @@ jobs:
         
       - name: Run Tests
         run: yarn test
+
   build_and_push:
     needs: run_tests
     name: Build Docker Image 🐳
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main' && success()
+    if: github.ref == 'refs/heads/main' && needs.run_tests.result == 'success'
     env:
       DOCKER_IMAGE_VERSION: 1.2.0
     steps:
@@ -64,23 +65,27 @@ jobs:
       - name: 🐳 Docker Login
         uses: docker/login-action@v2
         with:
-          username: ${{secrets.DOCKER_USER}}
-          password: ${{secrets.DOCKER_PASSWORD}}
+          username: ${{ secrets.DOCKER_USER }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+          
       - name: 🐳 Docker Build
         run: |
           docker image build --no-cache -t eliezercastro/bit-fly.co:$DOCKER_IMAGE_VERSION .
-      - name: 🐳 Docker tag version
+          
+      - name: 🐳 Docker Tag Version
         run: |
           docker tag eliezercastro/bit-fly.co:$DOCKER_IMAGE_VERSION eliezercastro/bit-fly.co:latest
+          
       - name: 🐳 Docker Push
         run: |
           docker image push eliezercastro/bit-fly.co:$DOCKER_IMAGE_VERSION
           docker image push eliezercastro/bit-fly.co:latest
+
   deploy_to_droplet:
     needs: build_and_push
     name: Deploy to Droplet 🚀
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'
+    if: github.ref == 'refs/heads/main' && needs.build_and_push.result == 'success'
     steps:
       - name: Checkout 🔄
         uses: actions/checkout@v4
@@ -101,7 +106,3 @@ jobs:
             docker pull eliezercastro/bit-fly.co:latest
             docker-compose down
             docker-compose up -d
-
-    
-    
-
