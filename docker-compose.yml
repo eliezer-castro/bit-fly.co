@@ -11,17 +11,19 @@ services:
       - ./nginx.conf:/etc/nginx/nginx.conf
     depends_on:
       - api
+    networks:
+      - bitfly-network
 
   api:
     container_name: bitfly_api
     image: eliezercastro/bit-fly.co:latest
     restart: always
-    ports:
-      - "3000:3000"
     env_file:
       - .env
     depends_on:
       - pg
+    networks:
+      - bitfly-network
 
   pg:
     container_name: bitfly_db
@@ -33,6 +35,12 @@ services:
       - .env
     volumes:
       - pgdata:/var/lib/postgresql/data
+    networks:
+      - bitfly-network
 
 volumes:
   pgdata: {}
+
+networks:
+  bitfly-network:
+    driver: bridge
