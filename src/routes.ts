@@ -1,18 +1,20 @@
 import { FastifyInstance } from 'fastify'
-import { generateSuggestion } from './controllers/generate-suggestion'
-import { registerUser } from './controllers/register'
-import { authenticate } from './controllers/login'
-import { createUrl } from './controllers/create-url'
-import { updateUrl } from './controllers/update-url'
-import { redirect } from './controllers/redirect'
-import { getAllUrls } from './controllers/get-all-url'
-import { getUrl } from './controllers/get-url'
-import { deleteUrl } from './controllers/delete-url'
-import { clickAnalytics } from './controllers/click-analytics'
+import { generateSuggestion } from './controllers/generate-suggestion-controller'
+import { registerUser } from './controllers/register-controller'
+import { authController } from './controllers/auth-controller'
+import { createUrl } from './controllers/create-url-controller'
+import { updateUrl } from './controllers/update-url-controller'
+import { redirect } from './controllers/redirect-controller'
+import { getAllUrls } from './controllers/get-all-url-controller'
+import { getUrl } from './controllers/get-url-controller'
+import { deleteUrl } from './controllers/delete-url-controller'
+import { clickAnalytics } from './controllers/click-analytics-controller'
 import { verifyJTW } from './middleware/verify-jwt'
-import { refresh } from './controllers/refresh'
-import { updateProfile } from './controllers/update-profile'
-import { getUserProfile } from './controllers/get-user-profile'
+import { refreshTokenController } from './controllers/refresh-token-controller'
+import { updateProfile } from './controllers/update-profile-controller'
+import { getUserProfile } from './controllers/get-user-profile-controller'
+import { deleteUser } from './controllers/delete-user-controller'
+import { logoutController } from './controllers/logout-controller-controller'
 
 export async function appRoutes(app: FastifyInstance) {
   app.post(
@@ -291,13 +293,32 @@ export async function appRoutes(app: FastifyInstance) {
           200: {
             type: 'object',
             properties: {
-              token: { type: 'string' },
+              message: { type: 'string' },
             },
           },
         },
       },
     },
-    authenticate,
+    authController,
+  )
+
+  app.post(
+    '/v1/logout',
+    {
+      onRequest: [verifyJTW],
+      schema: {
+        tags: ['Authentication'],
+        response: {
+          200: {
+            type: 'object',
+            properties: {
+              message: { type: 'string' },
+            },
+          },
+        },
+      },
+    },
+    logoutController,
   )
 
   app.patch(
@@ -307,7 +328,7 @@ export async function appRoutes(app: FastifyInstance) {
         tags: ['Authentication'],
       },
     },
-    refresh,
+    refreshTokenController,
   )
 
   app.put(
@@ -370,5 +391,32 @@ export async function appRoutes(app: FastifyInstance) {
       },
     },
     getUserProfile,
+  )
+
+  app.delete(
+    '/v1/user',
+    {
+      onRequest: [verifyJTW],
+      schema: {
+        tags: ['Users'],
+        security: [{ BearerAuth: [] }],
+        body: {
+          type: 'object',
+          properties: {
+            password: { type: 'string' },
+          },
+          required: ['password'],
+        },
+        response: {
+          200: {
+            type: 'object',
+            properties: {
+              message: { type: 'string' },
+            },
+          },
+        },
+      },
+    },
+    deleteUser,
   )
 }

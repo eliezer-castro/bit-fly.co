@@ -1,7 +1,7 @@
 import { expect, describe, it, beforeEach } from 'vitest'
-import { ClickAnalyticsUseCase } from './click-analytics'
+import { ClickAnalyticsUseCase } from './click-analytics-use-case'
 import { InMemoryShortenedUrlRepository } from '@/repositories/in-memory/in-memory-shortened-url-repository'
-import { UrlNotExists } from './errors/url-not-exists'
+import { UrlNotExists } from './errors/url-not-exists-error'
 
 let shortenedUrlRepository: InMemoryShortenedUrlRepository
 let sut: ClickAnalyticsUseCase

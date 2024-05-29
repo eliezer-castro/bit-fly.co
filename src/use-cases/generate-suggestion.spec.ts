@@ -1,8 +1,8 @@
 import { expect, describe, it, beforeEach } from 'vitest'
-import { GenerateSuggestion } from './generate-suggestion'
+import { GenerateSuggestion } from './generate-suggestion-use-case'
 import { InMemoryShortenedUrlRepository } from '@/repositories/in-memory/in-memory-shortened-url-repository'
 import { InMemoryUserRepository } from '@/repositories/in-memory/in-memory-user-repository'
-import { Unauthorized } from './errors/unauthorized'
+import { Unauthorized } from './errors/unauthorized-error'
 
 let shortenedUrlRepository: InMemoryShortenedUrlRepository
 let userRepository: InMemoryUserRepository

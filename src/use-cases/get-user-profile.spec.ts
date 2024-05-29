@@ -1,8 +1,8 @@
 import { InMemoryUserRepository } from '@/repositories/in-memory/in-memory-user-repository'
 import { expect, describe, it, beforeEach } from 'vitest'
-import { GetUserProfileUseCase } from './get-user-profile'
+import { GetUserProfileUseCase } from './get-user-profile-use-case'
 import { nanoid } from 'nanoid'
-import { UserNotExists } from './errors/user-not-exists'
+import { UserNotExists } from './errors/user-not-exists-error'
 
 let userRepository: InMemoryUserRepository
 let sut: GetUserProfileUseCase

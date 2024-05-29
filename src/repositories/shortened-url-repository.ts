@@ -26,4 +26,6 @@ export interface ShortenedUrlRepository {
     newShortUrl: string,
     newTitleUrl: string,
   ): Promise<ShortenedUrl>
+
+  deleteManyUrlsByUserId(userId: string): Promise<void>
 }

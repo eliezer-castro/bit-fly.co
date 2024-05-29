@@ -56,4 +56,8 @@ export class InMemoryUserRepository implements UserRepository {
 
     return Promise.resolve(user)
   }
+
+  async deleteUser(userId: string): Promise<void> {
+    this.items = this.items.filter((user) => user.id !== userId)
+  }
 }

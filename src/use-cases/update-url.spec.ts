@@ -1,9 +1,9 @@
 import { describe, it, expect, beforeEach } from 'vitest'
-import { UpdateShortUrlCaseUse } from './update-url'
+import { UpdateShortUrlCaseUse } from './update-url-use-case'
 import { InMemoryShortenedUrlRepository } from '@/repositories/in-memory/in-memory-shortened-url-repository'
-import { AliasAlreadyExists } from './errors/alias-already-exists'
-import { UrlNotExists } from './errors/url-not-exists'
-import { MissingFields } from './errors/missing-fields'
+import { AliasAlreadyExists } from './errors/alias-already-exists-error'
+import { UrlNotExists } from './errors/url-not-exists-error'
+import { MissingFields } from './errors/missing-fields-error'
 
 let shortnedUrlRepository: InMemoryShortenedUrlRepository
 let sut: UpdateShortUrlCaseUse

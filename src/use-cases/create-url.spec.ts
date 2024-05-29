@@ -1,7 +1,7 @@
 import { InMemoryShortenedUrlRepository } from '@/repositories/in-memory/in-memory-shortened-url-repository'
 import { describe, it, expect, beforeEach } from 'vitest'
-import { CreateShortUrlUseCase } from './create-url'
-import { AliasAlreadyExists } from './errors/alias-already-exists'
+import { CreateShortUrlUseCase } from './create-url-use-case'
+import { AliasAlreadyExists } from './errors/alias-already-exists-error'
 
 let shortnedUrlRepository: InMemoryShortenedUrlRepository
 let sut: CreateShortUrlUseCase
