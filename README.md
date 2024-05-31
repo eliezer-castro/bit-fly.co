@@ -1,6 +1,6 @@
-## Readme.md para o Bit-Fly
+## Bit-Fly
 
-**Bit-Fly:** Um encurtador de URL com foco em testes de API!
+** Um encurtador de URL com foco em testes de API! **
 
 O Bit-Fly é um projeto que oferece uma API RESTful para encurtar URLs. Ele foi criado com o objetivo de auxiliar no aprendizado e na prática de testes de API. A API fornece diversos endpoints para realizar operações com URLs, como encurtar, recuperar detalhes, atualizar, excluir e obter sugestões de URLs curtas.
 
