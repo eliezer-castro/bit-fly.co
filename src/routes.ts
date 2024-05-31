@@ -1,5 +1,4 @@
 import { FastifyInstance } from 'fastify'
-import { generateSuggestion } from './controllers/generate-suggestion-controller'
 import { registerUser } from './controllers/register-controller'
 import { authController } from './controllers/auth-controller'
 import { createUrl } from './controllers/create-url-controller'
@@ -198,17 +197,6 @@ export async function appRoutes(app: FastifyInstance) {
       },
     },
     deleteUrl,
-  )
-
-  app.post(
-    '/v1/urls/suggestions',
-    {
-      onRequest: [verifyJTW],
-      schema: {
-        tags: ['URLs'],
-      },
-    },
-    generateSuggestion,
   )
 
   app.get(
