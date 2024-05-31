@@ -1,6 +1,4 @@
 import { FastifyInstance } from 'fastify'
-import * as fs from 'fs'
-
 import { registerUser } from './controllers/register-controller'
 import { authController } from './controllers/auth-controller'
 import { createUrl } from './controllers/create-url-controller'
@@ -18,12 +16,6 @@ import { deleteUser } from './controllers/delete-user-controller'
 import { logoutController } from './controllers/logout-controller-controller'
 
 export async function appRoutes(app: FastifyInstance) {
-  const bufferIndexHtml = fs.readFileSync('public/index.html')
-
-  app.get('/', async (request, reply) => {
-    reply.type('text/html').send(bufferIndexHtml)
-  })
-
   app.post(
     '/v1/urls',
     {
