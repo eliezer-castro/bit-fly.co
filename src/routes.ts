@@ -29,7 +29,7 @@ export async function appRoutes(app: FastifyInstance) {
             title: { type: 'string' },
             alias: { type: 'string' },
           },
-          required: ['url'],
+          required: ['longUrl'],
         },
         security: [{ BearerAuth: [] }],
         response: {
@@ -62,7 +62,7 @@ export async function appRoutes(app: FastifyInstance) {
           type: 'object',
           properties: {
             title: { type: 'string' },
-            short_url: { type: 'string' },
+            longUrl: { type: 'string' },
           },
         },
       },
@@ -108,9 +108,9 @@ export async function appRoutes(app: FastifyInstance) {
             limit: { type: 'integer' },
             orderBy: {
               type: 'string',
-              enum: ['clicks', 'created_at', 'updated_at'],
+              enum: ['clicks', 'createdAt', 'updatedAt'],
             },
-            orderDir: { type: 'string', enum: ['asc', 'desc'] },
+            orderDirection: { type: 'string', enum: ['asc', 'desc'] },
             dateFrom: { type: 'string', format: 'date-time' },
             dateTo: { type: 'string', format: 'date-time' },
           },
@@ -123,12 +123,12 @@ export async function appRoutes(app: FastifyInstance) {
               properties: {
                 id: { type: 'string' },
                 title: { type: 'string' },
-                long_url: { type: 'string', format: 'uri' },
-                short_url: { type: 'string', format: 'uri' },
+                longUrl: { type: 'string', format: 'uri' },
+                shortUrl: { type: 'string', format: 'uri' },
                 clicks: { type: 'integer' },
                 clickDates: { type: 'array' },
-                created_at: { type: 'string', format: 'date-time' },
-                updated_at: { type: 'string', format: 'date-time' },
+                createdAt: { type: 'string', format: 'date-time' },
+                updatedAt: { type: 'string', format: 'date-time' },
               },
             },
           },
@@ -158,12 +158,12 @@ export async function appRoutes(app: FastifyInstance) {
             properties: {
               id: { type: 'string' },
               title: { type: 'string' },
-              long_url: { type: 'string', format: 'uri' },
-              short_url: { type: 'string', format: 'uri' },
+              longUrl: { type: 'string', format: 'uri' },
+              shortUrl: { type: 'string', format: 'uri' },
               clicks: { type: 'integer' },
               clickDates: { type: 'array' },
-              created_at: { type: 'string', format: 'date-time' },
-              updated_at: { type: 'string', format: 'date-time' },
+              createdAt: { type: 'string', format: 'date-time' },
+              updatedAt: { type: 'string', format: 'date-time' },
             },
           },
         },
@@ -238,7 +238,7 @@ export async function appRoutes(app: FastifyInstance) {
   )
 
   app.post(
-    '/v1/register',
+    '/v1/auth/register',
     {
       schema: {
         tags: ['Authentication'],
@@ -265,7 +265,7 @@ export async function appRoutes(app: FastifyInstance) {
   )
 
   app.post(
-    '/v1/login',
+    '/v1/auth/login',
     {
       schema: {
         tags: ['Authentication'],
@@ -291,7 +291,7 @@ export async function appRoutes(app: FastifyInstance) {
   )
 
   app.post(
-    '/v1/logout',
+    '/v1/auth/logout',
     {
       onRequest: [verifyJTW],
       schema: {
@@ -309,8 +309,8 @@ export async function appRoutes(app: FastifyInstance) {
     logoutController,
   )
 
-  app.patch(
-    '/v1/token/refresh',
+  app.post(
+    '/v1/auth/refresh',
     {
       schema: {
         tags: ['Authentication'],
@@ -320,7 +320,7 @@ export async function appRoutes(app: FastifyInstance) {
   )
 
   app.put(
-    '/v1/user/profile',
+    '/v1/users/profile',
     {
       onRequest: [verifyJTW],
       schema: {
@@ -358,7 +358,7 @@ export async function appRoutes(app: FastifyInstance) {
   )
 
   app.get(
-    '/v1/user/profile',
+    '/v1/users/profile',
     {
       onRequest: [verifyJTW],
       schema: {
@@ -372,7 +372,7 @@ export async function appRoutes(app: FastifyInstance) {
               name: { type: 'string' },
               email: { type: 'string' },
               password: { type: 'string' },
-              created_at: { type: 'string', format: 'date-time' },
+              createdAt: { type: 'string', format: 'date-time' },
             },
           },
         },
@@ -382,7 +382,7 @@ export async function appRoutes(app: FastifyInstance) {
   )
 
   app.delete(
-    '/v1/user',
+    '/v1/users',
     {
       onRequest: [verifyJTW],
       schema: {
