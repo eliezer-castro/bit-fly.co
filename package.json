@@ -1,12 +1,35 @@
 {
   "name": "bit-fly.co",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "Monorepo para o projeto bit-fly.co",
+  "private": true,
+  "workspaces": [
+    "apps/*"
+  ],
+  "packageManager": "pnpm@8.15.0",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "pnpm --parallel --recursive dev",
+    "build": "pnpm --recursive build",
+    "start": "pnpm --recursive start",
+    "test": "pnpm --recursive test",
+    "lint": "pnpm --recursive lint",
+    "clean": "pnpm --recursive clean",
+    "backend:dev": "pnpm --filter backend dev",
+    "backend:build": "pnpm --filter backend build",
+    "backend:start": "pnpm --filter backend start",
+    "email-service:dev": "pnpm --filter email-service dev",
+    "email-service:build": "pnpm --filter email-service build",
+    "email-service:start": "pnpm --filter email-service start"
   },
-  "keywords": [],
+  "devDependencies": {
+    "@types/node": "^20.12.8",
+    "typescript": "^5.4.5"
+  },
+  "keywords": ["monorepo", "url-shortener", "api"],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "engines": {
+    "node": "20.x",
+    "pnpm": ">=8.0.0"
+  }
 }

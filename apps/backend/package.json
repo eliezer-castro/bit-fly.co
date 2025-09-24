@@ -1,5 +1,5 @@
 {
-  "name": "encurtador-url-api",
+  "name": "backend",
   "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",
@@ -11,7 +11,9 @@
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
     "test:ui": "vitest --ui",
-    "start:migrate:prod": "prisma migrate deploy && npm run start"
+    "start:migrate:prod": "prisma migrate deploy && npm run start",
+    "clean": "rm -rf build node_modules",
+    "lint": "eslint src --ext .ts,.js --fix"
   },
   "devDependencies": {
     "@rocketseat/eslint-config": "^2.2.2",

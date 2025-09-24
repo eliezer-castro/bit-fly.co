@@ -1,0 +1,23 @@
+{
+  "name": "email-service",
+  "version": "1.0.0",
+  "description": "Serviço de email para o projeto bit-fly.co",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "dev": "echo \"Email service dev not configured yet\"",
+    "start": "echo \"Email service start not configured yet\"",
+    "build": "echo \"Email service build not configured yet\"",
+    "test": "echo \"Email service test not configured yet\"",
+    "clean": "rm -rf build node_modules",
+    "lint": "echo \"Email service lint not configured yet\""
+  },
+  "devDependencies": {
+    "@types/node": "^20.12.8",
+    "typescript": "^5.4.5"
+  },
+  "dependencies": {},
+  "engines": {
+    "node": "20.x"
+  }
+}
