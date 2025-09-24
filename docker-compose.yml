@@ -2,19 +2,6 @@ version: '3.0'
 
 services:
 
-  pg:
-    container_name: bitfly_db
-    image: bitnami/postgresql
-    restart: always
-    ports:
-      - "5432:5432"
-    env_file:
-      - .env
-    volumes:
-      - pgdata:/var/lib/postgresql/data
-    networks:
-      - default
-
   api:
     container_name: bitfly_api
     image: eliezercastro/bit-fly.co:latest
@@ -23,8 +10,8 @@ services:
       - "3000:3000"
     env_file:
       - .env
-    depends_on:
-      - pg
+    volumes:
+      - ./data:/app/data
     networks:
       - default
 
@@ -40,9 +27,6 @@ services:
     mem_limit: 512m
     networks:
       - default
-
-volumes:
-  pgdata: {}
 
 networks:
   default:
