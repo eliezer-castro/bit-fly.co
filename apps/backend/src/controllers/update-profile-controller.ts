@@ -1,11 +1,11 @@
-import { UserRepositoryImpl } from '@/repositories/user-repository-impl'
-import { EmailAlreadyExists } from '@/use-cases/errors/email-already-exists-error'
-import { InvalidPassword } from '@/use-cases/errors/invalid-password-error'
-import { MissingFields } from '@/use-cases/errors/missing-fields-error'
-import { UserNotExists } from '@/use-cases/errors/user-not-exists-error'
-import { UpdateUserProfileUseCase } from '@/use-cases/update-profile-use-case'
-import { FastifyReply, FastifyRequest } from 'fastify'
-import { z } from 'zod'
+import { UserRepositoryImpl } from "@/repositories/user-repository-impl";
+import { EmailAlreadyExists } from "@/use-cases/errors/email-already-exists-error";
+import { InvalidPassword } from "@/use-cases/errors/invalid-password-error";
+import { MissingFields } from "@/use-cases/errors/missing-fields-error";
+import { UserNotExists } from "@/use-cases/errors/user-not-exists-error";
+import { UpdateUserProfileUseCase } from "@/use-cases/update-profile-use-case";
+import { FastifyReply, FastifyRequest } from "fastify";
+import { z } from "zod";
 
 export async function updateProfile(
   request: FastifyRequest,
@@ -16,15 +16,15 @@ export async function updateProfile(
     email: z.string().optional(),
     currentPassword: z.string().optional(),
     password: z.string().optional(),
-  })
+  });
 
   const { name, email, currentPassword, password } = updateBodySchema.parse(
     request.body,
-  )
+  );
 
   try {
-    const userRepository = new UserRepositoryImpl()
-    const updateProfileUseCase = new UpdateUserProfileUseCase(userRepository)
+    const userRepository = new UserRepositoryImpl();
+    const updateProfileUseCase = new UpdateUserProfileUseCase(userRepository);
 
     const user = await updateProfileUseCase.execute({
       userId: request.user.sub,
@@ -32,25 +32,25 @@ export async function updateProfile(
       email,
       currentPassword,
       password,
-    })
+    });
 
-    reply.send({ message: 'Perfil atualizado com sucesso', data: user })
+    reply.send({ message: "Perfil atualizado com sucesso", data: user });
   } catch (error) {
     if (error instanceof MissingFields) {
-      return reply.status(400).send({ message: error.message })
+      return reply.status(400).send({ message: error.message });
     }
 
     if (error instanceof UserNotExists) {
-      return reply.status(404).send({ message: error.message })
+      return reply.status(404).send({ message: error.message });
     }
 
     if (error instanceof EmailAlreadyExists) {
-      return reply.status(409).send({ message: error.message })
+      return reply.status(409).send({ message: error.message });
     }
 
     if (error instanceof InvalidPassword) {
-      return reply.status(400).send({ message: error.message })
+      return reply.status(400).send({ message: error.message });
     }
-    throw error
+    throw error;
   }
 }

@@ -1,6 +1,6 @@
-import { PrismaClient } from '@prisma/client'
-import { Token } from '@/models/token'
-import { TokenRepository } from './token-repository'
+import { PrismaClient } from "@prisma/client";
+import { Token } from "@/models/token";
+import { TokenRepository } from "./token-repository";
 
 export class TokenRepositoryImpl implements TokenRepository {
   create(token: Token): Promise<Token> {
@@ -11,7 +11,7 @@ export class TokenRepositoryImpl implements TokenRepository {
         expires_at: token.expires_at,
         created_at: token.created_at,
       },
-    })
+    });
   }
 
   findByToken(token: string): Promise<Token | null> {
@@ -19,7 +19,7 @@ export class TokenRepositoryImpl implements TokenRepository {
       where: {
         token,
       },
-    })
+    });
   }
 
   async delete(token: string): Promise<void> {
@@ -27,7 +27,7 @@ export class TokenRepositoryImpl implements TokenRepository {
       where: {
         token,
       },
-    })
+    });
   }
 
   findByUserId(user_id: string): Promise<Token[]> {
@@ -35,12 +35,12 @@ export class TokenRepositoryImpl implements TokenRepository {
       where: {
         user_id,
       },
-    })
+    });
   }
 
-  private prisma: PrismaClient
+  private prisma: PrismaClient;
 
   constructor() {
-    this.prisma = new PrismaClient()
+    this.prisma = new PrismaClient();
   }
 }

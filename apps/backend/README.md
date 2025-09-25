@@ -8,36 +8,36 @@ O Bit-Fly é um projeto que oferece uma API RESTful para encurtar URLs. Ele foi 
 
 **URLs:**
 
-* **Encurtar URLs:** Gere URLs curtas e memoráveis para seus links longos.
-* **Obter detalhes de URLs:** Acesse informações como o URL longo original, o número de cliques e a data de criação da URL curta.
-* **Atualizar URLs:** Modifique o título e a URL curta de uma URL existente.
-* **Excluir URLs:** Remova URLs curtas que não sejam mais necessárias.
-* **Obter sugestões de URLs curtas:** Receba sugestões de URLs curtas com base no URL longo fornecido.
-* **Analisar URLs:** Obtenha estatísticas de cliques para cada URL curta.
-* **Autenticação:** Proteja seus endpoints com autenticação Bearer.
+- **Encurtar URLs:** Gere URLs curtas e memoráveis para seus links longos.
+- **Obter detalhes de URLs:** Acesse informações como o URL longo original, o número de cliques e a data de criação da URL curta.
+- **Atualizar URLs:** Modifique o título e a URL curta de uma URL existente.
+- **Excluir URLs:** Remova URLs curtas que não sejam mais necessárias.
+- **Obter sugestões de URLs curtas:** Receba sugestões de URLs curtas com base no URL longo fornecido.
+- **Analisar URLs:** Obtenha estatísticas de cliques para cada URL curta.
+- **Autenticação:** Proteja seus endpoints com autenticação Bearer.
 
 **Autenticação:**
 
-* **Registro:** Crie uma conta no Bit-Fly com nome, email e senha.
-* **Login:** Acesse sua conta usando seu email e senha.
-* **Token JWT:** Após o login, receba um token JWT para autenticação em outras requisições.
-* **Renovação de Token:** Renove seu token JWT quando necessário.
+- **Registro:** Crie uma conta no Bit-Fly com nome, email e senha.
+- **Login:** Acesse sua conta usando seu email e senha.
+- **Token JWT:** Após o login, receba um token JWT para autenticação em outras requisições.
+- **Renovação de Token:** Renove seu token JWT quando necessário.
 
 **Gerenciamento de Perfil:**
 
-* **Atualização:**  Altere seu nome, email e atualize sua senha.
-* **Visualização:** Acesse seus dados de perfil, incluindo nome, email e data de criação da conta.
-* **Exclusão:** Exclua sua conta permanentemente (com confirmação).
+- **Atualização:** Altere seu nome, email e atualize sua senha.
+- **Visualização:** Acesse seus dados de perfil, incluindo nome, email e data de criação da conta.
+- **Exclusão:** Exclua sua conta permanentemente (com confirmação).
 
 **Casos de uso:**
 
-* **Testes de API:** Utilize o Bit-Fly para testar endpoints de encurtamento de URL em diferentes frameworks de teste.
-* **Aplicações Web:** Integre o Bit-Fly em seu aplicativo web para oferecer um serviço de encurtamento de URL aos seus usuários.
-* **Ferramentas de produtividade:** Crie ferramentas que utilizem o Bit-Fly para encurtar URLs automaticamente.
+- **Testes de API:** Utilize o Bit-Fly para testar endpoints de encurtamento de URL em diferentes frameworks de teste.
+- **Aplicações Web:** Integre o Bit-Fly em seu aplicativo web para oferecer um serviço de encurtamento de URL aos seus usuários.
+- **Ferramentas de produtividade:** Crie ferramentas que utilizem o Bit-Fly para encurtar URLs automaticamente.
 
 ## Exemplos de Requisições
 
-Este documento apresenta exemplos de requisições para a API do Bit-Fly. 
+Este documento apresenta exemplos de requisições para a API do Bit-Fly.
 
 **Observação:** Estes endpoints requerem autenticação Bearer. Obtenha um token JWT antes de realizar as chamadas.
 
@@ -45,9 +45,9 @@ Este documento apresenta exemplos de requisições para a API do Bit-Fly.
 
 **1. Encurtar uma URL:**
 
-* **Método:** POST
-* **URL:** `/v1/urls`
-* **Body:**
+- **Método:** POST
+- **URL:** `/v1/urls`
+- **Body:**
 
 ```json
 {
@@ -55,7 +55,7 @@ Este documento apresenta exemplos de requisições para a API do Bit-Fly.
 }
 ```
 
-* **Resposta:**
+- **Resposta:**
 
 ```json
 {
@@ -65,15 +65,15 @@ Este documento apresenta exemplos de requisições para a API do Bit-Fly.
 
 **2. Obter lista de URLs encurtadas:**
 
-* **Método:** GET
-* **URL:** `/v1/urls`
-* **Parâmetros (opcionais):**
-    * `limit`: Número máximo de resultados por página.
-    * `orderBy`: Campo para ordenar os resultados (por exemplo, "clicks", "created_at", "updated_at").
-    * `orderDir`: Direção da ordenação (por exemplo, "asc" ou "desc").
-    * `dateFrom`: Data inicial para filtrar resultados (formato: "YYYY-MM-DD").
-    * `dateTo`: Data final para filtrar resultados (formato: "YYYY-MM-DD").
-* **Resposta:**
+- **Método:** GET
+- **URL:** `/v1/urls`
+- **Parâmetros (opcionais):**
+  - `limit`: Número máximo de resultados por página.
+  - `orderBy`: Campo para ordenar os resultados (por exemplo, "clicks", "created_at", "updated_at").
+  - `orderDir`: Direção da ordenação (por exemplo, "asc" ou "desc").
+  - `dateFrom`: Data inicial para filtrar resultados (formato: "YYYY-MM-DD").
+  - `dateTo`: Data final para filtrar resultados (formato: "YYYY-MM-DD").
+- **Resposta:**
 
 ```json
 [
@@ -97,10 +97,10 @@ Este documento apresenta exemplos de requisições para a API do Bit-Fly.
 
 **3. Obter detalhes de uma URL curta:**
 
-* **Método:** GET
-* **URL:** `/v1/urls/{id}`
-* **Caminho:** Substitua `{id}` pelo ID da URL curta.
-* **Resposta:**
+- **Método:** GET
+- **URL:** `/v1/urls/{id}`
+- **Caminho:** Substitua `{id}` pelo ID da URL curta.
+- **Resposta:**
 
 ```json
 {
@@ -119,10 +119,10 @@ Este documento apresenta exemplos de requisições para a API do Bit-Fly.
 
 **4. Atualizar uma URL curta:**
 
-* **Método:** PUT
-* **URL:** `/v1/urls/{id}`
-* **Caminho:** Substitua `{id}` pelo ID da URL curta.
-* **Body:**
+- **Método:** PUT
+- **URL:** `/v1/urls/{id}`
+- **Caminho:** Substitua `{id}` pelo ID da URL curta.
+- **Body:**
 
 ```json
 {
@@ -131,14 +131,14 @@ Este documento apresenta exemplos de requisições para a API do Bit-Fly.
 }
 ```
 
-* **Observação:** Você só pode alterar o título e a própria URL curta (se disponível).
+- **Observação:** Você só pode alterar o título e a própria URL curta (se disponível).
 
 **5. Excluir uma URL curta:**
 
-* **Método:** DELETE
-* **URL:** `/v1/urls/{id}`
-* **Caminho:** Substitua `{id}` pelo ID da URL curta.
-* **Resposta:**
+- **Método:** DELETE
+- **URL:** `/v1/urls/{id}`
+- **Caminho:** Substitua `{id}` pelo ID da URL curta.
+- **Resposta:**
 
 ```json
 {
@@ -148,21 +148,18 @@ Este documento apresenta exemplos de requisições para a API do Bit-Fly.
 
 **6. Redirecionar para URL original:**
 
-* **Método:** GET
-* **URL:** `/{shortCode}`
-* **Caminho:** Substitua `{shortCode}` pelo código curto da URL.
-* **Resposta (Código de Status):**
-
-
-
+- **Método:** GET
+- **URL:** `/{shortCode}`
+- **Caminho:** Substitua `{shortCode}` pelo código curto da URL.
+- **Resposta (Código de Status):**
 
 ### Autenticação & Usuário
 
 **1. Registrar um novo usuário:**
 
-* **Método:** POST
-* **URL:** `/v1/register`
-* **Body:**
+- **Método:** POST
+- **URL:** `/v1/register`
+- **Body:**
 
 ```json
 {
@@ -172,7 +169,7 @@ Este documento apresenta exemplos de requisições para a API do Bit-Fly.
 }
 ```
 
-* **Resposta:**
+- **Resposta:**
 
 ```json
 {
@@ -182,9 +179,9 @@ Este documento apresenta exemplos de requisições para a API do Bit-Fly.
 
 **2. Fazer login:**
 
-* **Método:** POST
-* **URL:** `/v1/login`
-* **Body:**
+- **Método:** POST
+- **URL:** `/v1/login`
+- **Body:**
 
 ```json
 {
@@ -193,7 +190,7 @@ Este documento apresenta exemplos de requisições para a API do Bit-Fly.
 }
 ```
 
-* **Resposta:**
+- **Resposta:**
 
 ```json
 {
@@ -205,9 +202,9 @@ Este documento apresenta exemplos de requisições para a API do Bit-Fly.
 
 **3. Atualizar perfil do usuário:**
 
-* **Método:** PUT
-* **URL:** `/v1/user/profile`
-* **Body:**
+- **Método:** PUT
+- **URL:** `/v1/user/profile`
+- **Body:**
 
 ```json
 {
@@ -218,7 +215,7 @@ Este documento apresenta exemplos de requisições para a API do Bit-Fly.
 }
 ```
 
-* **Resposta:**
+- **Resposta:**
 
 ```json
 {
@@ -235,9 +232,9 @@ Este documento apresenta exemplos de requisições para a API do Bit-Fly.
 
 **4. Obter perfil do usuário:**
 
-* **Método:** GET
-* **URL:** `/v1/user/profile`
-* **Resposta:**
+- **Método:** GET
+- **URL:** `/v1/user/profile`
+- **Resposta:**
 
 ```json
 {
@@ -251,9 +248,9 @@ Este documento apresenta exemplos de requisições para a API do Bit-Fly.
 
 **5. Excluir usuário:**
 
-* **Método:** DELETE
-* **URL:** `/v1/user`
-* **Body:**
+- **Método:** DELETE
+- **URL:** `/v1/user`
+- **Body:**
 
 ```json
 {
@@ -261,7 +258,7 @@ Este documento apresenta exemplos de requisições para a API do Bit-Fly.
 }
 ```
 
-* **Resposta:**
+- **Resposta:**
 
 ```json
 {
@@ -271,9 +268,9 @@ Este documento apresenta exemplos de requisições para a API do Bit-Fly.
 
 **6. Renovar token:**
 
-* **Método:** PATCH
-* **URL:** `/v1/token/refresh`
-* **Resposta:**
+- **Método:** PATCH
+- **URL:** `/v1/token/refresh`
+- **Resposta:**
 
 ```json
 {
@@ -283,16 +280,15 @@ Este documento apresenta exemplos de requisições para a API do Bit-Fly.
 
 **Observações:**
 
-* A senha precisa ter pelo menos 6 caracteres.
-* O email precisa ser válido e único.
-* O nome do usuário pode ter no máximo 255 caracteres
+- A senha precisa ter pelo menos 6 caracteres.
+- O email precisa ser válido e único.
+- O nome do usuário pode ter no máximo 255 caracteres
 
 **Contribuições:**
 O Bit-Fly é um projeto Open Source e você é bem-vindo a contribuir! Você pode enviar issues, pull requests ou participar da comunidade.
 
 **Links Úteis:**
 
-* Repositório GitHub: [bit-fly.co](https://github.com/eliezer-castro/bit-fly.co)
-* API: [api.bit-fly.co](http://api.bit-fly.co:3333/api/v1/6wbManF)
-* Documentação Swagger: [Swagger](http://api.bit-fly.co:3333/docs/static/index.html)
-
+- Repositório GitHub: [bit-fly.co](https://github.com/eliezer-castro/bit-fly.co)
+- API: [api.bit-fly.co](http://api.bit-fly.co:3333/api/v1/6wbManF)
+- Documentação Swagger: [Swagger](http://api.bit-fly.co:3333/docs/static/index.html)

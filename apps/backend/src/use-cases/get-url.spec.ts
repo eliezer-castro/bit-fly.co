@@ -1,45 +1,45 @@
-import { expect, describe, it, beforeEach } from 'vitest'
-import { GetUrlUseCase } from './get-url-use-case'
-import { InMemoryShortenedUrlRepository } from '@/repositories/in-memory/in-memory-shortened-url-repository'
-import { UrlNotExists } from './errors/url-not-exists-error'
-import { ShortenedUrl } from '@/models/ShortenedUrl'
+import { expect, describe, it, beforeEach } from "vitest";
+import { GetUrlUseCase } from "./get-url-use-case";
+import { InMemoryShortenedUrlRepository } from "@/repositories/in-memory/in-memory-shortened-url-repository";
+import { UrlNotExists } from "./errors/url-not-exists-error";
+import { ShortenedUrl } from "@/models/ShortenedUrl";
 
-let shortenedUrlRepository: InMemoryShortenedUrlRepository
-let sut: GetUrlUseCase
+let shortenedUrlRepository: InMemoryShortenedUrlRepository;
+let sut: GetUrlUseCase;
 
-describe('Get URL Use Case', () => {
+describe("Get URL Use Case", () => {
   beforeEach(() => {
-    shortenedUrlRepository = new InMemoryShortenedUrlRepository()
-    sut = new GetUrlUseCase(shortenedUrlRepository)
-  })
+    shortenedUrlRepository = new InMemoryShortenedUrlRepository();
+    sut = new GetUrlUseCase(shortenedUrlRepository);
+  });
 
-  it('should return existing shortened URL for a given user', async () => {
-    const userId = 'user123'
-    const shortUrl = 'abc123'
+  it("should return existing shortened URL for a given user", async () => {
+    const userId = "user123";
+    const shortUrl = "abc123";
     const expectedShortenedUrl: ShortenedUrl = {
-      id: '1',
-      title: 'Example Title',
+      id: "1",
+      title: "Example Title",
       short_url: shortUrl,
-      long_url: 'https://example.com/original-url',
+      long_url: "https://example.com/original-url",
       clicks: 5,
       user_id: userId,
       created_at: new Date(),
       updated_at: new Date(),
-    }
+    };
 
-    await shortenedUrlRepository.createShortenedUrl(expectedShortenedUrl)
+    await shortenedUrlRepository.createShortenedUrl(expectedShortenedUrl);
 
-    const retrievedShortenedUrl = await sut.execute(userId, shortUrl)
+    const retrievedShortenedUrl = await sut.execute(userId, shortUrl);
 
-    expect(retrievedShortenedUrl).toEqual(expectedShortenedUrl)
-  })
+    expect(retrievedShortenedUrl).toEqual(expectedShortenedUrl);
+  });
 
-  it('should throw UrlNotExists error if the URL does not exist for the user', async () => {
-    const userId = 'user123'
-    const shortUrl = 'invalidShortUrl'
+  it("should throw UrlNotExists error if the URL does not exist for the user", async () => {
+    const userId = "user123";
+    const shortUrl = "invalidShortUrl";
 
     await expect(() => sut.execute(userId, shortUrl)).rejects.toThrowError(
       UrlNotExists,
-    )
-  })
-})
+    );
+  });
+});

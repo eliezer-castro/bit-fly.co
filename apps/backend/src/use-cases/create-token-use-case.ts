@@ -1,19 +1,19 @@
-import { TokenRepository } from '@/repositories/token-repository'
-import { nanoid } from 'nanoid'
+import { TokenRepository } from "@/repositories/token-repository";
+import { nanoid } from "nanoid";
 
 interface TokenUseCaseInterface {
-  token: string
-  user_id: string
-  expires_at: Date
+  token: string;
+  user_id: string;
+  expires_at: Date;
 }
 
 interface TokenUseCaseResponse {
-  token: string
+  token: string;
 }
 
 export class CreateTokenUseCase {
   // eslint-disable-next-line prettier/prettier
-  constructor(private tokenRepository: TokenRepository) { }
+  constructor(private tokenRepository: TokenRepository) {}
 
   async execute({
     token,
@@ -26,8 +26,8 @@ export class CreateTokenUseCase {
       user_id,
       expires_at,
       created_at: new Date(),
-    })
+    });
 
-    return { token: newToken.token }
+    return { token: newToken.token };
   }
 }

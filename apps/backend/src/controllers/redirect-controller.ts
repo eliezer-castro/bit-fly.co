@@ -1,27 +1,27 @@
-import { ShortenedUrlRepositoryImpl } from '@/repositories/shortened-url-repository-impl'
-import { InvalidUrl } from '@/use-cases/errors/invalid-url-error'
-import { RedirectCaseUse } from '@/use-cases/redirect-use-case'
-import { FastifyReply, FastifyRequest } from 'fastify'
-import { z } from 'zod'
+import { ShortenedUrlRepositoryImpl } from "@/repositories/shortened-url-repository-impl";
+import { InvalidUrl } from "@/use-cases/errors/invalid-url-error";
+import { RedirectCaseUse } from "@/use-cases/redirect-use-case";
+import { FastifyReply, FastifyRequest } from "fastify";
+import { z } from "zod";
 
 export async function redirect(request: FastifyRequest, reply: FastifyReply) {
   const redirectSchema = z.object({
     shortCode: z.string(),
-  })
+  });
 
-  const { shortCode } = redirectSchema.parse(request.params)
+  const { shortCode } = redirectSchema.parse(request.params);
 
   try {
-    const shortenedUrlRepository = new ShortenedUrlRepositoryImpl()
-    const redirectCaseUse = new RedirectCaseUse(shortenedUrlRepository)
+    const shortenedUrlRepository = new ShortenedUrlRepositoryImpl();
+    const redirectCaseUse = new RedirectCaseUse(shortenedUrlRepository);
 
-    const originalUrl = await redirectCaseUse.execute(shortCode)
+    const originalUrl = await redirectCaseUse.execute(shortCode);
 
-    reply.redirect(originalUrl)
+    reply.redirect(originalUrl);
   } catch (error) {
     if (error instanceof InvalidUrl) {
-      return reply.status(400).send({ message: error.message })
+      return reply.status(400).send({ message: error.message });
     }
-    throw error
+    throw error;
   }
 }

@@ -1,8 +1,8 @@
-import { UserRepositoryImpl } from '@/repositories/user-repository-impl'
-import { UserAlreadyExists } from '@/use-cases/errors/user-already-exists-error'
-import { RegisterUseCase } from '@/use-cases/register-use-case'
-import { FastifyReply, FastifyRequest } from 'fastify'
-import { z } from 'zod'
+import { UserRepositoryImpl } from "@/repositories/user-repository-impl";
+import { UserAlreadyExists } from "@/use-cases/errors/user-already-exists-error";
+import { RegisterUseCase } from "@/use-cases/register-use-case";
+import { FastifyReply, FastifyRequest } from "fastify";
+import { z } from "zod";
 
 export async function registerUser(
   request: FastifyRequest,
@@ -12,20 +12,20 @@ export async function registerUser(
     name: z.string(),
     email: z.string().email(),
     password: z.string().min(6),
-  })
+  });
 
-  const { name, email, password } = userSchema.parse(request.body)
+  const { name, email, password } = userSchema.parse(request.body);
 
   try {
-    const userRepository = new UserRepositoryImpl()
-    const registerUseCase = new RegisterUseCase(userRepository)
-    await registerUseCase.execute({ name, email, password })
-    reply.status(201).send({ message: 'Usuário criado com sucesso' })
+    const userRepository = new UserRepositoryImpl();
+    const registerUseCase = new RegisterUseCase(userRepository);
+    await registerUseCase.execute({ name, email, password });
+    await reply.status(201).send({ message: "Usuário criado com sucesso" });
   } catch (error) {
     if (error instanceof UserAlreadyExists) {
-      return reply.status(409).send({ message: error.message })
+      return reply.status(409).send({ message: error.message });
     }
 
-    throw error
+    throw error;
   }
 }

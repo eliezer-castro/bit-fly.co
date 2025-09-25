@@ -1,7 +1,14 @@
 {
   "extends": "@rocketseat/eslint-config/node",
+  "trailingComma": "none",
   "rules": {
     "camelcase": "off",
-    "no-useless-constructor": "off"
+    "no-useless-constructor": "off",
+
+    "indent": "off",
+    "prettier/prettier": [
+      "error",
+      { "useTabs": true, "tabWidth": 4, "singleQuote": false }
+    ]
   }
 }

@@ -1,4 +1,4 @@
-import { FastifyReply } from 'fastify'
+import { FastifyReply } from "fastify";
 
 export async function generateTokens(userId: string, reply: FastifyReply) {
   const accessToken = await reply.jwtSign(
@@ -6,20 +6,20 @@ export async function generateTokens(userId: string, reply: FastifyReply) {
     {
       sign: {
         sub: userId,
-        expiresIn: '10m',
+        expiresIn: "10m",
       },
     },
-  )
+  );
 
   const refreshToken = await reply.jwtSign(
     { userId },
     {
       sign: {
         sub: userId,
-        expiresIn: '7d',
+        expiresIn: "7d",
       },
     },
-  )
+  );
 
-  return { accessToken, refreshToken }
+  return { accessToken, refreshToken };
 }

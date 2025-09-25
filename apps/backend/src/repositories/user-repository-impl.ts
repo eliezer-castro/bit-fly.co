@@ -1,18 +1,18 @@
-import { PrismaClient } from '@prisma/client'
-import { UserRepository } from './user-repository'
-import { User } from '../models/User'
+import { PrismaClient } from "@prisma/client";
+import { UserRepository } from "./user-repository";
+import { User } from "../models/User";
 
 export class UserRepositoryImpl implements UserRepository {
   findByEmail(email: string): Promise<User | null> {
-    return this.prisma.user.findFirst({ where: { email } })
+    return this.prisma.user.findFirst({ where: { email } });
   }
 
   findById(id: string): Promise<User | null> {
-    return this.prisma.user.findFirst({ where: { id } })
+    return this.prisma.user.findFirst({ where: { id } });
   }
 
   createUser(user: User): Promise<User> {
-    return this.prisma.user.create({ data: user })
+    return this.prisma.user.create({ data: user });
   }
 
   async updateUserProfile(
@@ -30,18 +30,18 @@ export class UserRepositoryImpl implements UserRepository {
         email,
         password,
       },
-    })
+    });
 
-    return user
+    return user;
   }
 
   async deleteUser(userId: string): Promise<void> {
-    await this.prisma.user.delete({ where: { id: userId } })
+    await this.prisma.user.delete({ where: { id: userId } });
   }
 
-  private prisma: PrismaClient
+  private prisma: PrismaClient;
 
   constructor() {
-    this.prisma = new PrismaClient()
+    this.prisma = new PrismaClient();
   }
 }

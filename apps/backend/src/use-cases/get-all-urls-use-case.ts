@@ -1,20 +1,20 @@
-import { ShortenedUrl } from '@/models/ShortenedUrl'
-import { ShortenedUrlRepository } from '@/repositories/shortened-url-repository'
+import { ShortenedUrl } from "@/models/ShortenedUrl";
+import { ShortenedUrlRepository } from "@/repositories/shortened-url-repository";
 
 export interface GetAllUrls {
-  limit?: number
-  orderBy?: 'clicks' | 'created_at' | 'updated_at'
-  orderDir?: 'asc' | 'desc'
-  dateFrom?: string
-  dateTo?: string
+  limit?: number;
+  orderBy?: "clicks" | "created_at" | "updated_at";
+  orderDir?: "asc" | "desc";
+  dateFrom?: string;
+  dateTo?: string;
 }
 
 export class GetAllUrlsUseCase {
   // eslint-disable-next-line prettier/prettier
-  constructor(private shortenedUrlRepository: ShortenedUrlRepository) { }
+  constructor(private shortenedUrlRepository: ShortenedUrlRepository) {}
 
   async execute(userId: string, options: GetAllUrls): Promise<ShortenedUrl[]> {
-    const { limit, orderBy, orderDir, dateFrom, dateTo } = options
+    const { limit, orderBy, orderDir, dateFrom, dateTo } = options;
 
     return this.shortenedUrlRepository.findAllByUserId(userId, {
       limit,
@@ -22,6 +22,6 @@ export class GetAllUrlsUseCase {
       orderDir,
       dateFrom,
       dateTo,
-    })
+    });
   }
 }

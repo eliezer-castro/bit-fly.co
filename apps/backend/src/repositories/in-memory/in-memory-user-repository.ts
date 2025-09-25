@@ -1,19 +1,19 @@
-import { User } from '@/models/User'
-import { UserRepository } from '../user-repository'
+import { User } from "@/models/User";
+import { UserRepository } from "../user-repository";
 
 export class InMemoryUserRepository implements UserRepository {
-  public items: User[] = []
+  public items: User[] = [];
 
   async findByEmail(email: string): Promise<User | null> {
-    const user = this.items.find((user) => user.email === email)
+    const user = this.items.find((user) => user.email === email);
 
-    return user || null
+    return user || null;
   }
 
   async findById(id: string): Promise<User | null> {
-    const user = this.items.find((user) => user.id === id)
+    const user = this.items.find((user) => user.id === id);
 
-    return user || null
+    return user || null;
   }
 
   async createUser(data: User): Promise<User> {
@@ -23,11 +23,11 @@ export class InMemoryUserRepository implements UserRepository {
       email: data.email,
       password: data.password,
       created_at: new Date(),
-    }
+    };
 
-    this.items.push(user)
+    this.items.push(user);
 
-    return user
+    return user;
   }
 
   updateUserProfile(
@@ -36,28 +36,28 @@ export class InMemoryUserRepository implements UserRepository {
     email?: string | undefined,
     password?: string | undefined,
   ): Promise<User | null> {
-    const user = this.items.find((user) => user.id === userId)
+    const user = this.items.find((user) => user.id === userId);
 
     if (!user) {
-      return Promise.resolve(null)
+      return Promise.resolve(null);
     }
 
     if (name) {
-      user.name = name
+      user.name = name;
     }
 
     if (email) {
-      user.email = email
+      user.email = email;
     }
 
     if (password) {
-      user.password = password
+      user.password = password;
     }
 
-    return Promise.resolve(user)
+    return Promise.resolve(user);
   }
 
   async deleteUser(userId: string): Promise<void> {
-    this.items = this.items.filter((user) => user.id !== userId)
+    this.items = this.items.filter((user) => user.id !== userId);
   }
 }
