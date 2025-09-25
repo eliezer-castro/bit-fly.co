@@ -1,34 +1,31 @@
-version: '3.0'
+version: "3.8"
 
 services:
-
-  api:
-    container_name: bitfly_api
-    image: eliezercastro/bit-fly.co:latest
-    restart: always
-    ports:
-      - "3000:3000"
-    env_file:
-      - .env
-    volumes:
-      - ./data:/app/data
-    networks:
-      - default
-
-  nginx:
-    restart: unless-stopped
-    image: nginx
-    ports:
-      - "8080:80"
-    depends_on:
-      - api
-    volumes:
-      - ./default.conf:/etc/nginx/conf.d/default.conf
-    mem_limit: 512m
-    networks:
-      - default
+    rabbitmq:
+        image: rabbitmq:3-management
+        container_name: bit-fly-rabbitmq
+        ports:
+            - "5672:5672"
+            - "15672:15672"
+        environment:
+            RABBITMQ_DEFAULT_USER: admin
+            RABBITMQ_DEFAULT_PASS: admin123
+        volumes:
+            - rabbitmq_data:/var/lib/rabbitmq
+        networks:
+            - bit-fly-network
+    mailhog:
+        image: mailhog/mailhog
+        container_name: bit-fly-mailhog
+        ports:
+            - "1025:1025"
+            - "8025:8025"
+        networks:
+            - bit-fly-network
 
 networks:
-  default:
+    bit-fly-network:
+        driver: bridge
 
-
+volumes:
+    rabbitmq_data:

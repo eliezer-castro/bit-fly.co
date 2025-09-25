@@ -8,7 +8,7 @@ on:
       - main
       - develop
 
-name: Workflow Dispatch 
+name: Workflow Dispatch
 
 jobs:
   run_tests:
@@ -22,15 +22,15 @@ jobs:
       - name: Setup Node.js 📦
         uses: actions/setup-node@v3
         with:
-          node-version: '20'
+          node-version: "20"
 
       - name: Install Yarn 🧶
         run: npm install -g yarn
 
       - name: Install Dependencies 📥
         run: yarn install
-      
-      - name: Write the .env file 📝 
+
+      - name: Write the .env file 📝
         run: |
           echo "GEMINI_API_KEY=${{ secrets.GEMINI_API_KEY }}" > .env
           echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> .env
@@ -38,7 +38,7 @@ jobs:
           echo "POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}" >> .env
           echo "POSTGRES_USER=${{ secrets.POSTGRES_USER }}" >> .env
           echo "DATABASE_URL=${{ secrets.DATABASE_URL }}" >> .env
-        
+
       - name: Run Tests
         run: yarn test
 
@@ -52,8 +52,8 @@ jobs:
     steps:
       - name: Checkout 🔄
         uses: actions/checkout@v4
-      
-      - name: Write the .env file 📝 
+
+      - name: Write the .env file 📝
         run: |
           echo "GEMINI_API_KEY=${{ secrets.GEMINI_API_KEY }}" > .env
           echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> .env
@@ -67,15 +67,15 @@ jobs:
         with:
           username: ${{ secrets.DOCKER_USER }}
           password: ${{ secrets.DOCKER_PASSWORD }}
-          
+
       - name: 🐳 Docker Build
         run: |
           docker image build --no-cache -t eliezercastro/bit-fly.co:$DOCKER_IMAGE_VERSION .
-          
+
       - name: 🐳 Docker Tag Version
         run: |
           docker tag eliezercastro/bit-fly.co:$DOCKER_IMAGE_VERSION eliezercastro/bit-fly.co:latest
-          
+
       - name: 🐳 Docker Push
         run: |
           docker image push eliezercastro/bit-fly.co:$DOCKER_IMAGE_VERSION

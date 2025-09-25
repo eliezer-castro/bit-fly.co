@@ -25,7 +25,11 @@
     "@types/node": "^20.12.8",
     "typescript": "^5.4.5"
   },
-  "keywords": ["monorepo", "url-shortener", "api"],
+  "keywords": [
+    "monorepo",
+    "url-shortener",
+    "api"
+  ],
   "author": "",
   "license": "ISC",
   "engines": {

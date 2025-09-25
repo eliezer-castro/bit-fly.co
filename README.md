@@ -64,12 +64,14 @@ docker-compose up -d
 ## Scripts Disponíveis
 
 ### Scripts Globais (raiz)
+
 - `pnpm dev` - Executa todos os serviços em desenvolvimento
 - `pnpm build` - Build de todos os apps
 - `pnpm start` - Inicia todos os apps em produção
 - `pnpm test` - Executa testes de todos os apps
 
 ### Scripts Específicos
+
 - `pnpm backend:dev` - Desenvolvimento do backend
 - `pnpm backend:build` - Build do backend
 - `pnpm backend:start` - Produção do backend
@@ -77,6 +79,7 @@ docker-compose up -d
 ## Configuração
 
 ### Backend
+
 1. Copie o arquivo `.env.example` para `.env` no diretório `apps/backend/`
 2. Configure as variáveis de ambiente necessárias:
    - `DATABASE_URL`: URL do banco de dados SQLite

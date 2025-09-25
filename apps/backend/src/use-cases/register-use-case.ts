@@ -3,42 +3,56 @@ import { nanoid } from "nanoid";
 import { User } from "../models/User";
 import { UserAlreadyExists } from "./errors/user-already-exists-error";
 import { UserRepository } from "@/repositories/user-repository";
+import { MessagingService } from "@/services/messaging-service";
 
 interface RegisterUseCaseInterface {
-  name: string;
-  email: string;
-  password: string;
+	name: string;
+	email: string;
+	password: string;
 }
 
 interface RegisterUseCaseResponse {
-  user: User;
+	user: User;
 }
 
 export class RegisterUseCase {
-  // eslint-disable-next-line
-  constructor(private userRepository: UserRepository) {}
+	// eslint-disable-next-line
+	constructor(private userRepository: UserRepository) {}
 
-  async execute({
-    name,
-    email,
-    password,
-  }: RegisterUseCaseInterface): Promise<RegisterUseCaseResponse> {
-    const existingUser = await this.userRepository.findByEmail(email);
+	async execute({
+		name,
+		email,
+		password,
+	}: RegisterUseCaseInterface): Promise<RegisterUseCaseResponse> {
+		const existingUser = await this.userRepository.findByEmail(email);
 
-    if (existingUser) {
-      throw new UserAlreadyExists();
-    }
+		if (existingUser) {
+			throw new UserAlreadyExists();
+		}
 
-    const newUser: User = {
-      id: nanoid(),
-      name,
-      email,
-      password: bcrypt.hashSync(password, 8),
-      created_at: new Date(),
-    };
+		const newUser: User = {
+			id: nanoid(),
+			name,
+			email,
+			password: bcrypt.hashSync(password, 8),
+			created_at: new Date(),
+		};
 
-    const user = await this.userRepository.createUser(newUser);
+		const user = await this.userRepository.createUser(newUser);
 
-    return { user };
-  }
+		try {
+			await MessagingService.publishUserRegistered({
+				name: user.name,
+				email: user.email,
+				userId: user.id,
+			});
+		} catch (error) {
+			console.error(
+				"[Register Use Case] Erro ao publicar evento de usuário registrado:",
+				error
+			);
+		}
+
+		return { user };
+	}
 }
